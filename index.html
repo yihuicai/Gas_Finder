@@ -9,6 +9,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
+        <div class="big">
         <header class="header">
             <a id="menu" class="header__menu col-xs-1">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">    
@@ -26,8 +27,10 @@
 		        <li class="nav__item"><button class="btn btn-info" href="#">Map Setting</button></li>
 		        <li class="nav__item"><button class="btn btn-warning" href="#">About Author</button></li>
 		    </ul>
-		</nav>    
+		</nav>
+        </div>
   		<main class="container">
+            <div id="map" data-bind="googlemap: {latitude: local.latitude, longitude: local.longitude}"></div>
             <form id="getaddr">
                 <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <br>
@@ -51,18 +54,27 @@
                         <input type="checkbox" data-bind="checked: remember" > Remember this address
                     </label>
                 </div>
-                <a type="submit" id="submit" class="btn btn-default" data-bind="css: valid">Submit</a>
+                <a type="submit" id="submit" class="btn btn-default" data-bind="css: valid, click: load">Submit</a>
             </form> 
   	  		<div class="row">
   	    		<p class="col-xs-12">A dedicated work by Alan</p>
   	  		</div>
   	    </main>
     </body>
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg&callback=initMap">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg&callback=initMap">
     </script>
     <script src="js/main.js"></script>
     <script>
+     // TODO: Create a map variable
+     var map;
+     
+     // TODO: Complete the following function to initialize the map
+    `
+
+    `
+    </script>
+    <script>
+    
       /*
        * Open the drawer when the menu ison is clicked.
        */
