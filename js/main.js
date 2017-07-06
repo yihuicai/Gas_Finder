@@ -1,4 +1,4 @@
-
+/*
 ko.bindingHandlers.googlemap = {
     init: function (element, valueAccessor) {
         var
@@ -16,20 +16,13 @@ ko.bindingHandlers.googlemap = {
           });
     }
 };
+*/
 
-var map;
-
-function viewModel() {
-
-    function initMap() {
-      map = new google.maps.Map(document.getElementById('map'),{
-      center: {lat: 37.4191334 , lng: -121.896173315 },
-      zoom: 5
-     });
-
+function ViewModel() {
+    var self=this;
+    this.map=ko.observable();
        // TODO: use a constructor to create a new map JS object. You can use the coordinates
        // we used, 40.7413549, -73.99802439999996 or your own!
-     };
     
     this.local=ko.observable({latitude: 37.4191334, longitude: -121.896173315})
 	this.street= ko.observable();
@@ -42,13 +35,10 @@ function viewModel() {
             'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']);
     this.state= ko.observable();
     this.zipcode= ko.observable();
-    this.remember= ko.observable(false);
-
-    this.map=ko.observable();
-    
+    this.remember= ko.observable(false);    
     this.initMap= function initMap() {
         // Constructor creates a new map - only center and zoom are required.
-        this.map() = new google.maps.Map(document.getElementById('map'), {
+        this.map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 40.7413549, lng: -73.9980244},
           zoom: 13
         });
@@ -59,9 +49,9 @@ function viewModel() {
         return this.street()+"+"+this.city()+"+"+this.state()+"+"+this.zipcode();
     }, this);
     this.valid= ko.pureComputed(function() {
-        return this.street()&&this.city()&&this.state()&&this.zipcode() ?  undefined : 'disabled';
+        return this.street()&&this.city()&&this.state() ?  undefined : 'disabled';
     },this);
-    this.load = function loadData(result, map) {
+    this.load = function loadData(result) {
         console.log("success");
         var address = this.result();
         address = address.split(' ').join('+');
@@ -70,25 +60,26 @@ function viewModel() {
         var getmarker=$.getJSON(locationurl, function(data){
             for(var i=0; i<Object.keys(data.results).length; i++){
                 console.log(data.results[i].geometry.location);
+                var markerlatlng=data.results[i].geometry.location;
             }
-            return markerlatlng;
+            self.map.setCenter(markerlatlng);
+            self.map.setZoom(15);
+            var marker = new google.maps.Marker({
+                position: markerlatlng,
+                map: self.map,
+                title: 'First Marker!'
+            });      
         });
-        /*
-        var marker = new google.maps.Marker({
-          position: markerlatlng,
-          map: map,
-          title: 'First Marker!'
-        });
-        */
+
+
         console.log(locationurl);
         return false;
     }
     
 };
  
-$(document).ready( function(){
-    ko.applyBindings(new viewModel());
-    initMap();
+var vm = new ViewModel()
+ko.applyBindings(vm);
     
-});
+
 
