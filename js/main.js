@@ -20,10 +20,14 @@ ko.bindingHandlers.googlemap = {
 
 function ViewModel() {
     var self=this;
+    this.name=ko.observable();
     this.map=ko.observable();
+    this.markers = [];
        // TODO: use a constructor to create a new map JS object. You can use the coordinates
        // we used, 40.7413549, -73.99802439999996 or your own!
+    this.type=ko.observable();
     
+    this.types=ko.observableArray(['Park', 'Home', 'Company','Restaurant', 'Others']);
     this.local=ko.observable({latitude: 37.4191334, longitude: -121.896173315})
 	this.street= ko.observable();
     this.city= ko.observable();
@@ -35,49 +39,160 @@ function ViewModel() {
             'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']);
     this.state= ko.observable();
     this.zipcode= ko.observable();
-    this.remember= ko.observable(false);    
-    this.initMap= function initMap() {
-        // Constructor creates a new map - only center and zoom are required.
-        this.map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 40.7413549, lng: -73.9980244},
-          zoom: 13
-        });
-      };
-    
-    
-    this.result= ko.computed(function() {
+    this.remember= ko.observable(false);
+    this.fulladdr= ko.computed(function() {
         return this.street()+"+"+this.city()+"+"+this.state()+"+"+this.zipcode();
     }, this);
     this.valid= ko.pureComputed(function() {
-        return this.street()&&this.city()&&this.state() ?  undefined : 'disabled';
+        return this.name()&&this.type()&&this.street() ?  undefined : 'disabled';
     },this);
-    this.load = function loadData(result) {
-        console.log("success");
-        var address = this.result();
-        address = address.split(' ').join('+');
-        var locationurl="https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg";
-        var markerlatlng;
-        var getmarker=$.getJSON(locationurl, function(data){
-            for(var i=0; i<Object.keys(data.results).length; i++){
-                console.log(data.results[i].geometry.location);
-                var markerlatlng=data.results[i].geometry.location;
-            }
-            self.map.setCenter(markerlatlng);
-            self.map.setZoom(15);
+    var bound;
+    this.placeArray=ko.observableArray([
+        {latlng : { lat: 37.4158559, lng: -121.8975733 },
+         location : "447 Great Mall Dr+Milpitas+California+95035",
+         type : "Others",
+         name : "Greate Mall",
+         remember : false},
+        {latlng : { lat: 37.4176568 , lng: -121.9016895 } ,
+         location : "62 Sun Song+Milpitas+California+95035",
+         type : "Home",
+         name : "Alan's Home",
+         remember : false}
+         ]);
+    
+    this.f_new_place=ko.observable(false);
+    this.f_findPlace=ko.observable(false)
+    this.f_big_map=ko.pureComputed(function(){
+        return !(this.f_new_place()||this.f_findPlace());
+    }, this);
+
+    $(".close").on("click", function(){
+        $(this).parent().addClass("noshow");
+        
+        if($(this).parent().attr("id")==="info"){
+            self.f_findPlace(false);
+        }else{
+            self.f_new_place(false);
+        };
+        if(self.f_big_map()===true){
+            $("#map_wrapper").removeClass("smallmap");
+        };
+        
+        self.initMap();
+    });
+    $("#find").on("click", function(){
+         $("#info").removeClass("noshow");
+         self.f_findPlace(true);
+        /*
+         if(self.f_new_place()===true){
+             $("#getaddr").addClass("noshow");
+             self.f_new_place(false);
+         };
+         */
+         if(self.f_big_map()===false){
+            $("#map_wrapper").addClass("smallmap");
+         };
+    });
+    $("#add").on("click", function(){
+         $("#getaddr").removeClass("noshow");
+         self.f_new_place(true);
+         if(self.f_big_map()===false){
+            $("#map_wrapper").addClass("smallmap");
+         };
+         self.initMap();
+    });
+    this.initMap= function initMap() {
+        // Constructor creates a new map
+        this.map = new google.maps.Map(document.getElementById('map'), {
+          center: self.placeArray()[0].latlng, //{lat: 40.7413549, lng: -73.9980244},
+          zoom: 14
+        });
+        self.bound= new google.maps.LatLngBounds();
+        //loop over placeArray and set markers
+        for(var i=0; i<Object.keys(self.placeArray()).length;i++){
+            
+            var markerlatlng = self.placeArray()[i].latlng;
+            var title = self.placeArray()[i].name;
+            var type = self.placeArray()[i].type;
+            //create and push the marker
             var marker = new google.maps.Marker({
                 position: markerlatlng,
                 map: self.map,
-                title: 'First Marker!'
-            });      
+                title: title,
+                animation: google.maps.Animation.DROP
+            });
+            self.markers.push(marker);
+            // make the marker visible
+            self.bound.extend(marker.position);
+            var infowindow = new google.maps.InfoWindow({});
+        };
+        self.map.fitBounds(self.bound);
+        google.maps.event.addListenerOnce(self.map, 'bounds_changed', function(event) {
+            if (this.getZoom() > 15) {
+                this.setZoom(14);
+            };
         });
-
-
-        console.log(locationurl);
-        return false;
-    }
+      };
     
+    this.processing = function() {
+        
+    }
+
+       
+    this.load = function loadData(fulladdr) {
+        
+        var infoWindow;
+        var address = self.fulladdr();
+        address = address.split(' ').join('+');
+        var locationurl="https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg";
+        var addNewlocation=$.getJSON(locationurl, function(data){
+            
+            var latlng=data.results[0].geometry.location;
+
+            //self.map.setCenter(latlng);
+            //self.map.setZoom(15);
+            self.place={
+                name : self.name(),
+                type : self.type(),
+                location : self.fulladdr(),
+                latlng: latlng,
+                remember : self.remember()
+            };
+            
+            var marker = new google.maps.Marker({
+                position: latlng,
+                map: self.map,
+                title: self.name(),
+                animation: google.maps.Animation.DROP
+            });
+            self.bound.extend(marker.position);
+            self.map.fitBounds(self.bound);
+            console.log(self.place);
+            self.placeArray.push(self.place);
+            //var gasurl="https://api.yelp.com/v2/search";
+            /*var getgas=$.ajax({
+                url: gasurl,
+                data: {
+                    term: "gas",
+                    cll: markerlatlng.lat+","+markerlatlng.lng,
+                    
+                    
+                }}).done(function(data){
+                console.log(data);});
+            
+            load.getgas();
+            */
+        });
+        
+        console.log("success");
+        
+        
+        console.log(self.placeArray());
+        return false;
+    };
 };
- 
+
+
 var vm = new ViewModel()
 ko.applyBindings(vm);
     

@@ -17,45 +17,65 @@
           	    </svg>
           	</a>  
             <div class="header__inner">
-                <h3 class="header__title">Alan's gas finder</h3>
+                <h3 class="header__title">Alan's Map</h3>
         	</div>
         </header>
 	    <nav id="drawer" class="nav"> 
 		    <ul class="nav__list">
-		        <li class="nav__item"><button class="btn btn-primary" href="#">Get address</button></li>
-		        <li class="nav__item"><button class="btn btn-success" href="#">GPS locate</button></li>
-		        <li class="nav__item"><button class="btn btn-info" href="#">Map Setting</button></li>
+		        <li class="nav__item"><button class="btn btn-primary" id="add" href="#">Add places</button></li>
+		        <li class="nav__item"><button class="btn btn-success" id="find" href="#">Find places</button></li>
+		        <li class="nav__item"><button class="btn btn-info" href="#">Save places</button></li>
 		        <li class="nav__item"><button class="btn btn-warning" href="#">About Author</button></li>
 		    </ul>
 		</nav>
         </div>
-  		<main class="container">
-            <div id="map" data-bind="googlemap: {latitude: local.latitude, longitude: local.longitude}"></div>
-            <form id="getaddr">
-                <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <br>
-                <div class="form-group">
-                    <label for="address">Street</label>
-                    <input type="street" class="form-control" data-bind="value: street" placeholder="e.g. 100 Yourstreet st">
+  		<main class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12" id="map_wrapper" >
+                    <div id="map"></div>
                 </div>
-                <div class="form-group">
-                    <label for="address">City</label>
-                    <input type="city" class="form-control" data-bind="value: city" placeholder="City / County">
+                <div class="col-xs-4 noshow" id="info">
+                    <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <br>
+                    <ul data-bind="foreach: placeArray" class="list-group">
+                        <li data-bind="text : name" class="list-group-item"></li>
+                        <li data-bind="text : type" class="list-group-item"></li>
+                        <br>
+                    </ul>
                 </div>
-                <label for="state">State</label>
-                <select class="form-control" data-bind="options: states, value: state, optionsCaption: 'Select a state'"></select>
-                <br>
-                <div class="form-group">
-                    <label for="Zipcode">Zipcode</label>
-                    <input type="zipcode" class="form-control" data-bind="value: zipcode"  placeholder="Your zipcode: e.g. 12345">
-                </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" data-bind="checked: remember" > Remember this address
-                    </label>
-                </div>
-                <a type="submit" id="submit" class="btn btn-default" data-bind="css: valid, click: load">Submit</a>
-            </form> 
+                <form class="col-xs-4 noshow" id="getaddr">
+                    <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <br>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="name" class="form-control" data-bind="value: name" placeholder="Name">
+                    </div>
+                    <label for="type">Type</label>
+                    <select class="form-control" data-bind="options: types, value: type, optionsCaption: 'Choose a type'"></select>
+                    <br>
+                    <div class="form-group">
+                        <label for="address">Street (Place) Name</label>
+                        <input type="street" class="form-control" data-bind="value: street" placeholder="e.g. 100 Yourstreet st">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">City</label>
+                        <input type="city" class="form-control" data-bind="value: city" placeholder="City / County">
+                    </div>
+                    <label for="state">State</label>
+                    <select class="form-control" data-bind="options: states, value: state, optionsCaption: 'Select a state'"></select>
+                    <br>
+                    <div class="form-group">
+                        <label for="Zipcode">Zipcode</label>
+                        <input type="zipcode" class="form-control" data-bind="value: zipcode"  placeholder="Your zipcode: e.g. 12345">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" data-bind="checked: remember" > Remember this address
+                        </label>
+                    </div>
+                    <a type="submit" id="submit" class="btn btn-default" data-bind="css: valid, click: load">Submit</a>
+                </form> 
+            </div>
   	  		<div class="row">
   	    		<p class="col-xs-12">A dedicated work by Alan</p>
   	  		</div>

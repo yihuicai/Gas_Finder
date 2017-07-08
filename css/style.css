@@ -20,6 +20,10 @@ main {
   text-align: center;
 }
 
+.noshow {
+    display: none;
+
+}
 
 p {
   word-break: break-all;
@@ -33,7 +37,6 @@ p {
   margin-right: auto;
   margin-top: 0;
   padding: 0;
-
 }
 
 .nav__list {
@@ -52,10 +55,16 @@ p {
   text-transform: uppercase;
 }
 
+#getaddr {
+    width: 35%;
+    padding: 10px;
+    margin: 5px;
+    border: solid 2px #dcdcdc;
+}
+
 #map {
     width: 100%;
     height: 80vh;
-    margin: auto;
 }
 
 .nav a {
@@ -70,10 +79,15 @@ p {
 }
 
 @media screen and (min-width: 550px) {
+.smallmap{
+    width: 63%;
+
+}
+
 .big{
-        box-sizing: border-box;
-        border-bottom: solid 1px grey;
-    }
+    box-sizing: border-box;
+    border-bottom: solid 1px grey;
+}
 .nav__item{
     padding: 24px 0;
 }
@@ -93,7 +107,13 @@ header {
 }
 
 @media screen and (max-width: 549px) {
-  
+  #map_wrapper{
+        width: 100%;
+        padding: 5px;
+    }
+  #getaddr{
+        width: 95%;
+    }
   .header__title {
     margin-left: 0;
     font-size: 2em;
