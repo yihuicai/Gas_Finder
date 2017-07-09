@@ -29,7 +29,7 @@ function ViewModel() {
     
     this.types=ko.observableArray(['Park', 'Home', 'Company','Restaurant', 'Others']);
     this.local=ko.observable({latitude: 37.4191334, longitude: -121.896173315})
-	this.street= ko.observable();
+	  this.street= ko.observable();
     this.city= ko.observable();
     this.states= ko.observableArray(['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 
             'Delaware', 'Florida', 'Georgia' ,'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
@@ -59,6 +59,7 @@ function ViewModel() {
          name : "Alan's Home",
          remember : false}
          ]);
+    var infowindow;
     
     this.f_new_place=ko.observable(false);
     this.f_findPlace=ko.observable(false)
@@ -83,12 +84,6 @@ function ViewModel() {
     $("#find").on("click", function(){
          $("#info").removeClass("noshow");
          self.f_findPlace(true);
-        /*
-         if(self.f_new_place()===true){
-             $("#getaddr").addClass("noshow");
-             self.f_new_place(false);
-         };
-         */
          if(self.f_big_map()===false){
             $("#map_wrapper").addClass("smallmap");
          };
@@ -101,16 +96,64 @@ function ViewModel() {
          };
          self.initMap();
     });
+    function renderComments(latlng){
+      console.log(latlng);
+      var url="https://api.yelp.com/v3/businesses/search?latitude="+latlng.lat+"&longitude="+latlng.lng+"&term=food";
+      //console.log(url);
+      var settings = {
+        "url": 'https://api.yelp.com/v3/businesses/search?term=food&latitude=37.4158559&longitude=-121.8975733',
+        "method": "GET",
+        "dataType" : "json",
+        "headers": {
+          'authorization': 'Bearer IyepryQA29OGHKN0Hyw2aLBVg0rYRlsc-Fqxz2DYBtjRhP4mv8nT_4bjIybvOr3A6p8oNcGESXPGsygBBQmVB24X3ZHmD0XzJNJSxULgJNeKP5igN20QtU99cK5eWXYx',
+        }
+      }
+
+      $.ajax(settings).done(function (response) {
+        console.log(response);
+      });   
+/*
+      $.ajaxSetup(
+        {
+          "async" : true,
+          "headers" : {
+          "Authorization" :  "Bearer IyepryQA29OGHKN0Hyw2aLBVg0rYRlsc-Fqxz2DYBtjRhP4mv8nT_4bjIybvOr3A6p8oNcGESXPGsygBBQmVB24X3ZHmD0XzJNJSxULgJNeKP5igN20QtU99cK5eWXYx"
+        }
+      })
+      $.ajax({
+        type: "GET",
+        dataType :"json",
+        url: url
+              }).done(function(data){
+        console.log(data);
+      });
+*/
+    };
+
+
+    function popInfowindow(marker, infowindow){
+        if (infowindow.marker != marker) {
+          infowindow.marker = marker;
+
+          infowindow.setContent('<div>' + marker.title + '</div>'+'<div>'+marker.type+'</div>');
+          infowindow.open(map, marker);
+          // Make sure the marker property is cleared if the infowindow is closed.
+          infowindow.addListener('closeclick', function() {
+            infowindow.marker = null;
+          });
+        }
+    };
+
     this.initMap= function initMap() {
         // Constructor creates a new map
         this.map = new google.maps.Map(document.getElementById('map'), {
           center: self.placeArray()[0].latlng, //{lat: 40.7413549, lng: -73.9980244},
           zoom: 14
         });
+        
         self.bound= new google.maps.LatLngBounds();
         //loop over placeArray and set markers
         for(var i=0; i<Object.keys(self.placeArray()).length;i++){
-            
             var markerlatlng = self.placeArray()[i].latlng;
             var title = self.placeArray()[i].name;
             var type = self.placeArray()[i].type;
@@ -122,9 +165,14 @@ function ViewModel() {
                 animation: google.maps.Animation.DROP
             });
             self.markers.push(marker);
-            // make the marker visible
+            // make the marker within bound
             self.bound.extend(marker.position);
-            var infowindow = new google.maps.InfoWindow({});
+            // Set infowindow
+            self.infowindow = new google.maps.InfoWindow();
+            renderComments(markerlatlng);
+            marker.addListener("click", function(){
+                popInfowindow(this, self.infowindow);
+            });
         };
         self.map.fitBounds(self.bound);
         google.maps.event.addListenerOnce(self.map, 'bounds_changed', function(event) {
@@ -141,7 +189,6 @@ function ViewModel() {
        
     this.load = function loadData(fulladdr) {
         
-        var infoWindow;
         var address = self.fulladdr();
         address = address.split(' ').join('+');
         var locationurl="https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg";
@@ -191,6 +238,21 @@ function ViewModel() {
         return false;
     };
 };
+/*
+var yelp_call=function(){
+  $.ajax({
+            type : 'POST',
+            url : 'https://api.yelp.com/oauth2/token',
+            dataType :'application/json',
+            data : {
+              grant_type : "client_credentials",
+              client_id : "ZNxD5HfCBsAnw2sYjs6QHw",
+              client_secret : "01DifFhVwFGoKyuFcOrQH3ulF5hN5ojROFKiXowZpsHC99mWeOPtLUJVjmhQNPB6"
+            },
+
+          }).success(function(result){console.log(result);});
+}
+*/
 
 
 var vm = new ViewModel()
