@@ -123,7 +123,7 @@ function ViewModel() {
         crossDomain : true,
         dataType : 'json',
         method : 'GET',
-        url : 'https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?term=gas&latitude='+latlng.lat()+'&longitude='+latlng.lng()+'&categories=servicestations&sort_by=distance&limit=25',
+        url : 'https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?term=gas&latitude='+latlng.lat()+'&longitude='+latlng.lng()+'&open_now=true&categories=servicestations&sort_by=distance&limit=25',
         headers : {
         'authorization': 'Bearer IyepryQA29OGHKN0Hyw2aLBVg0rYRlsc-Fqxz2DYBtjRhP4mv8nT_4bjIybvOr3A6p8oNcGESXPGsygBBQmVB24X3ZHmD0XzJNJSxULgJNeKP5igN20QtU99cK5eWXYx'
         },
@@ -144,25 +144,15 @@ function ViewModel() {
                                 lng: response.businesses[j].coordinates.longitude};
             console.log(response.businesses[j]);
 
-            if (!(markerlatlng.lat&&markerlatlng.lng))
-                continue;           
-            var cata="";
-            
-            for (var k=0;k<response.businesses[j].categories.length;k++ ){
-              if(response.businesses[j].categories[k].title==="Gas Stations"){
-                cata="Gas Stations";
-                break;
-              }
-            };
-            if (cata!="Gas Stations")
-              continue;            
               
-            $('#gas_title'+i).replaceWith('<h4 id="gas_title'+ i +'">'+response.businesses[j].name+'</h4>')
-            $('#gas_img'+i).replaceWith('<img id="gas_img'+ i +'" src="'+response.businesses[j].image_url+'" width="200px" meters away</img>')
+            $('#gas_title'+i).replaceWith('<div id="gas_title'+ i +'"><h4>'+response.businesses[j].name+'</h4><h5>'+response.businesses[j].location.display_address[0]+'<br>'+response.businesses[j].location.display_address[1]+'</h5></div>')
+            $('#gas_img'+i).replaceWith('<img width="100%" id="gas_img'+ i +'" src="'+response.businesses[j].image_url+'" width="200px" meters away</img>')
             $('#gas_distance'+i).replaceWith('<p id="gas_distance'+ i +'">'+response.businesses[j].distance+' meters away</p>')
-              
+            i++;
+            if (!(markerlatlng.lat&&markerlatlng.lng))
+                continue;  
               var title = response.businesses[j].name;
-              var type = "Gas Station";
+              var type = response.businesses[j].categories;
               //create and push the marker
               var marker = new google.maps.Marker({
                   position: markerlatlng,
@@ -180,32 +170,22 @@ function ViewModel() {
               marker.addListener("click", function(){
                   popInfowindowg(this, infowindow);
               });
-              i++;
+              //i++;
           };
           self.map.fitBounds(gbound);
 
       }});
       }; 
-/*
-      $.ajaxSetup(
-        {
-          "async" : true,
-          "headers" : {
-          "Authorization" :  "Bearer IyepryQA29OGHKN0Hyw2aLBVg0rYRlsc-Fqxz2DYBtjRhP4mv8nT_4bjIybvOr3A6p8oNcGESXPGsygBBQmVB24X3ZHmD0XzJNJSxULgJNeKP5igN20QtU99cK5eWXYx"
-        }
-      })
-      $.ajax({
-        type: "GET",
-        dataType :"json",
-        url: url
-              }).done(function(data){
-        console.log(data);
-      });
-*/ 
+
     function popInfowindowg(marker, infowindow){
             if (infowindow.marker != marker) {
               infowindow.marker = marker;
-              infowindow.setContent('<div width="100px">' + marker.title + '</div>'+'<div width="100px">'+ marker.type+'</div>');
+              var content='<strong>' + marker.title+'</strong>';
+              for (var i=0;i<marker.type.length;i++){
+                content += '<div width="100px">'+ marker.type[i].title+'</div>';
+              };
+              infowindow.setContent(content);
+
               infowindow.open(map, marker);
               // Make sure the marker property is cleared if the infowindow is closed.
               infowindow.addListener('closeclick', function() {
@@ -218,7 +198,7 @@ function ViewModel() {
     function popInfowindow(marker, infowindow){
         if (infowindow.marker != marker) {
           infowindow.marker = marker;
-          infowindow.setContent('<div width="100px">' + marker.title + '</div>'+'<div width="100px">'+ marker.type+'</div>');
+          infowindow.setContent('<strong width="100px">' + marker.title + '</strong>'+'<div width="100px">'+ marker.type+'</div>');
           infowindow.open(map, marker);
           // Make sure the marker property is cleared if the infowindow is closed.
           infowindow.addListener('closeclick', function() {
@@ -301,21 +281,6 @@ function ViewModel() {
         return false;
     };
 };
-/*
-var yelp_call=function(){
-  $.ajax({
-            type : 'POST',
-            url : 'https://api.yelp.com/oauth2/token',
-            dataType :'application/json',
-            data : {
-              grant_type : "client_credentials",
-              client_id : "ZNxD5HfCBsAnw2sYjs6QHw",
-              client_secret : "01DifFhVwFGoKyuFcOrQH3ulF5hN5ojROFKiXowZpsHC99mWeOPtLUJVjmhQNPB6"
-            },
-
-          }).success(function(result){console.log(result);});
-}
-*/
 
 
 var vm = new ViewModel()
