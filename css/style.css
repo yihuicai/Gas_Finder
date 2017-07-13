@@ -56,15 +56,14 @@ p {
 }
 
 #getaddr {
-    width: 35%;
-    padding: 10px;
+    padding: 5px;
     margin: 5px;
     border: solid 2px #dcdcdc;
 }
 
 #map {
     width: 100%;
-    height: 80vh;
+    height: 60vh;
 }
 
 .nav a {
@@ -77,11 +76,13 @@ p {
   text-decoration: underline;
   color: #212121;
 }
-
-@media screen and (min-width: 550px) {
 .smallmap{
-    width: 63%;
+    width: 72%;
+}
+@media screen and (min-width: 651px) {
 
+.tinymap{
+  width: 45%;
 }
 
 .big{
@@ -106,9 +107,23 @@ header {
 }
 }
 
-@media screen and (max-width: 549px) {
+@media screen and (max-width: 650px) {
+  .w{
+        width: 100%;
+
+  }
+  #info{
+    position: absolute;
+    right: 10px;
+    z-index: 10; 
+    background-color: white;
+    border: solid 1px grey;
+
+  }
+
   #map_wrapper{
         width: 100%;
+        margin: auto;
         padding: 5px;
     }
   #getaddr{
