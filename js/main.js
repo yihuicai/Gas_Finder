@@ -63,6 +63,7 @@ function ViewModel() {
     this.placeArrayResult=ko.computed(function(){
       this.ret=ko.observableArray([]);
       self.showAll();
+
       if(!self.searchQuery()){
         return self.placeArray();
       };
@@ -242,7 +243,9 @@ function ViewModel() {
               //i++;
           };
           self.map.fitBounds(gbound);
-      }});
+      }}).fail(function(){
+        alert("Cannot load Yelp API to retreive the gas stations info")
+      });
     }; 
 
     function popInfowindowg(marker, infowindow){
@@ -339,13 +342,13 @@ function ViewModel() {
 
             //console.log(self.place);
             self.initMap();
-          
+        }).fail(function(textStatus,error){
+          var e=textStatus + ", " + error;
+          alert("Cannot load Google Map!");
+          $("map").text("This section cannot be loaded."+e)
         });
-        
-        console.log("success");
-        
-        
-        console.log(self.placeArray());
+        //console.log("success");
+        //console.log(self.placeArray());
         return false;
     };
 };
