@@ -3,11 +3,9 @@ function ViewModel() {
     this.name=ko.observable();
     this.map=ko.observable();
     this.markers = ko.observableArray([]);
-       // TODO: use a constructor to create a new map JS object. You can use the coordinates
-       // we used, 40.7413549, -73.99802439999996 or your own!
     this.type=ko.observable();
     this.image=ko.observable("problem.jpg");
-    
+    this.remain=function(){alert("This part is not finished, sorry :(");};
     this.types=ko.observableArray(['Park', 'Home', 'Company','Restaurant', 'Others']);
     this.local=ko.observable({latitude: 37.4191334, longitude: -121.896173315});
 	  this.street= ko.observable();
@@ -63,12 +61,9 @@ function ViewModel() {
     this.placeArrayResult=ko.computed(function(){
       this.ret=ko.observableArray([]);
       self.showAll();
-
       if(!self.searchQuery()){
         return self.placeArray();
       };
-      
-
       self.hideAll();
       for(var i=0;i<Object.keys(self.placeArray()).length;i++){
         if(self.placeArray()[i].name.startsWith(self.searchQuery())){
@@ -138,25 +133,7 @@ function ViewModel() {
          };
          self.initMap();
     });
-    /*
-    $('#marker').on('click',function(){
-      console.log($(this).text);
-      for(place in self.markers){
-        if($(this).text !== place.name){
-          marker.setMap(null);
-        }
-        else{
-          marker.setMap(self.map);
-        }
-      };
-    });
-
     
-        var getGas = function getPlace(place){
-          alert(place);
-        };
-    */
-
     this.viewPlace=function(place){
       for (var i=0;i<Object.keys(self.markers()).length; i++){
         if(self.markers()[i]['title']!==place.name){
@@ -243,8 +220,8 @@ function ViewModel() {
               //i++;
           };
           self.map.fitBounds(gbound);
-      }}).fail(function(){
-        alert("Cannot load Yelp API to retreive the gas stations info")
+      }}).error(function(){
+        alert("Cannot load Yelp API to retreive the gas stations info.")
       });
     }; 
 
@@ -287,7 +264,7 @@ function ViewModel() {
           zoom: 14
         });
         self.bound = new google.maps.LatLngBounds();
-
+        self.markers.removeAll();
                 //loop over placeArray and set markers
         for(var i=0; i<Object.keys(self.placeArray()).length;i++){
             var markerlatlng = self.placeArray()[i].latlng;
@@ -342,15 +319,13 @@ function ViewModel() {
 
             //console.log(self.place);
             self.initMap();
-        }).fail(function(textStatus,error){
-          var e=textStatus + ", " + error;
-          alert("Cannot load Google Map!");
-          $("map").text("This section cannot be loaded."+e)
-        });
-        //console.log("success");
-        //console.log(self.placeArray());
-        return false;
+        }).error(function(){self.mapError();});
     };
+    this.mapError=function() {
+          //var e=textStatus + ", " + error;
+          alert("Cannot load Google Map!");
+          $("#map").text("Google Maps cannot be loaded.");
+        }
 };
 
 

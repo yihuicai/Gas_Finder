@@ -37,8 +37,8 @@
 		    <ul class="nav__list">
 		        <li class="nav__item"><button class="btn btn-primary" id="add" href="#">Add places</button></li>
 		        <li class="nav__item"><button class="btn btn-success" id="find" href="#">See places</button></li>
-		        <li class="nav__item"><button class="btn btn-info" href="#">Save places</button></li>
-		        <li class="nav__item"><button class="btn btn-warning" href="#">About Author</button></li>
+		        <li class="nav__item"><button class="btn btn-info" data-bind="click: remain" href="#">Save places</button></li>
+		        <li class="nav__item"><button class="btn btn-warning" data-bind="click: remain" href="#">About Author</button></li>
 		    </ul>
 		</nav>
         </div>
@@ -125,7 +125,7 @@
   	    </main>
     </body>
     <script src="js/main.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg&callback=vm.initMap">
+    <script async defer onerror="vm.mapError()" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg&callback=vm.initMap">
     </script>
     <script>
     
