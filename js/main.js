@@ -28,6 +28,8 @@ function ViewModel() {
         return this.name()&&this.type()&&this.street() ?  undefined : 'disabled';
     },this);
     var bound;
+    var gmarkers=[];
+
     this.placeArray=ko.observableArray([
         {latlng : { lat: 37.4158559, lng: -121.8975733 },
          location : "447 Great Mall Dr+Milpitas+California+95035",
@@ -40,12 +42,51 @@ function ViewModel() {
          name : "Alan's Home",
          remember : false
         }
-         ]);
-    this.gasArray=ko.observableArray();
+    ]);
+    this.hideAll=function(){
+      for (var i=0;i<Object.keys(self.markers()).length; i++)
+        self.markers()[i].setMap(null);
+      for (var i=0; i<gmarkers.length;i++)
+        gmarkers[i].setMap(null);
+      gmarkers=[];
+    };
+
+    this.showAll=function(){
+      for (var i=0;i<Object.keys(self.markers()).length; i++)
+        self.markers()[i].setMap(self.map);
+      for (var i=0; i<gmarkers.length;i++)
+        gmarkers[i].setMap(null);
+      gmarkers=[];
+    };
+
+    this.searchQuery=ko.observable();
+    this.placeArrayResult=ko.computed(function(){
+      this.ret=ko.observableArray([]);
+      self.showAll();
+      if(!self.searchQuery()){
+        return self.placeArray();
+      };
+      
+
+      self.hideAll();
+      for(var i=0;i<Object.keys(self.placeArray()).length;i++){
+        if(self.placeArray()[i].name.startsWith(self.searchQuery())){
+          for(var i=0;i<Object.keys(self.markers()).length;i++){
+            if(self.markers()[i]['title'].startsWith(self.searchQuery())){
+              self.markers()[i].setMap(self.map);
+              ret.push(self.placeArray()[i]);
+              //renderComments(self.markers()[i].position,self.markers()[i].title);
+              //popInfowindow(self.markers()[i], self.infowindow)
+            };
+          };
+          
+        };
+      };
+      return this.ret();
+    });
 
 
     var infowindow;
-    
     this.f_new_place=ko.observable(false);
     this.f_findPlace=ko.observable(false);
     this.f_big_map=ko.pureComputed(function(){
@@ -96,7 +137,6 @@ function ViewModel() {
          };
          self.initMap();
     });
-    var gmarkers=[];
     /*
     $('#marker').on('click',function(){
       console.log($(this).text);
@@ -115,15 +155,18 @@ function ViewModel() {
           alert(place);
         };
     */
+
     this.viewPlace=function(place){
       for (var i=0;i<Object.keys(self.markers()).length; i++){
         if(self.markers()[i]['title']!==place.name){
           self.markers()[i].setMap(null);
-          console.log(self.markers()[i]['title']);
+          //console.log(self.markers()[i]['title']);
         }
         else{
           self.markers()[i].setMap(self.map);
           toggleBounce(self.markers()[i]);
+          renderComments(self.markers()[i].position,self.markers()[i].title);
+          popInfowindow(self.markers()[i], self.infowindow)
         }
         //console.log(self.markers()[i].getMap())
       };
@@ -159,6 +202,7 @@ function ViewModel() {
           for(var i=0;i<gmarkers.length;i++){
             gmarkers[i].setMap(null);
           }
+          gmarkers=[];
           var i=0;
           var j=0;
 

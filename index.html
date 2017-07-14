@@ -31,10 +31,19 @@
         </div>
   		<main class="container-fluid">
             <div class="row">
-                <div class="col-xs-3 noshow" id="info">
+                <div class="col-sm-3 col-xs-4 noshow" id="info">
                     <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <br>
-                    <ul data-bind="foreach: placeArray" class="list-group">
+                    <div class="form-group">
+                        <label for="name">Filter</label>
+                        <input type="name" class="form-control" data-bind="textInput: searchQuery" placeholder="Enter your place to search">
+                    </div>
+                    <button class="btn btn-default" id="showall" href="#" data-bind="click: showAll">Show All</button>
+                    <button class="btn btn-default" id="showall" href="#" data-bind="click: hideAll">Hide All</button>
+                    <br>
+                    <br>
+                    <strong>Places</strong>
+                    <ul data-bind="foreach: placeArrayResult" class="list-group">
                         <li class="list-group-item"><a href="#" data-bind="text : name, click: $parent.viewPlace"></a></li>
                         <li data-bind="text : type" class="list-group-item"></li>
                         <br>
