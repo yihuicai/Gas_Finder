@@ -1,28 +1,8 @@
-/*
-ko.bindingHandlers.googlemap = {
-    init: function (element, valueAccessor) {
-        var
-          value = valueAccessor(),
-          latLng = new google.maps.LatLng(value.latitude, value.longitude),
-          mapOptions = {
-            zoom: 10,
-            center: latLng,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-            },
-          map = new google.maps.Map(element, mapOptions),
-          marker = new google.maps.Marker({
-            position: latLng,
-            map: map
-          });
-    }
-};
-*/
-
 function ViewModel() {
     var self=this;
     this.name=ko.observable();
     this.map=ko.observable();
-    this.markers = [];
+    this.markers = ko.observableArray([]);
        // TODO: use a constructor to create a new map JS object. You can use the coordinates
        // we used, 40.7413549, -73.99802439999996 or your own!
     this.type=ko.observable();
@@ -58,7 +38,8 @@ function ViewModel() {
          location : "62 Sun Song+Milpitas+California+95035",
          type : "Home",
          name : "Alan's Home",
-         remember : false}
+         remember : false
+        }
          ]);
     this.gasArray=ko.observableArray();
 
@@ -91,6 +72,7 @@ function ViewModel() {
         
         self.initMap();
     });
+
     $("#find").on("click", function(){
          $("#info").removeClass("noshow");
          self.f_findPlace(true);
@@ -115,10 +97,51 @@ function ViewModel() {
          self.initMap();
     });
     var gmarkers=[];
+    /*
+    $('#marker').on('click',function(){
+      console.log($(this).text);
+      for(place in self.markers){
+        if($(this).text !== place.name){
+          marker.setMap(null);
+        }
+        else{
+          marker.setMap(self.map);
+        }
+      };
+    });
 
-    function renderComments(latlng){
-      //console.log(latlng.lat());
+    
+        var getGas = function getPlace(place){
+          alert(place);
+        };
+    */
+    this.viewPlace=function(place){
+      for (var i=0;i<Object.keys(self.markers()).length; i++){
+        if(self.markers()[i]['title']!==place.name){
+          self.markers()[i].setMap(null);
+          console.log(self.markers()[i]['title']);
+        }
+        else{
+          self.markers()[i].setMap(self.map);
+          toggleBounce(self.markers()[i]);
+        }
+        //console.log(self.markers()[i].getMap())
+      };
+    };
+    var bounce=null;
+    function toggleBounce(marker){
+      if (bounce!==marker&&bounce!==null){
+        bounce.setAnimation(null);
+      }
+      bounce=marker;
+      if (marker.getAnimation()!==null){
+        marker.setAnimation(null);
+      }else{
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+      }
+    };
 
+    function renderComments(latlng,Locname){
       $.ajax({
         crossDomain : true,
         dataType : 'json',
@@ -128,6 +151,8 @@ function ViewModel() {
         'authorization': 'Bearer IyepryQA29OGHKN0Hyw2aLBVg0rYRlsc-Fqxz2DYBtjRhP4mv8nT_4bjIybvOr3A6p8oNcGESXPGsygBBQmVB24X3ZHmD0XzJNJSxULgJNeKP5igN20QtU99cK5eWXYx'
         },
         success: function( response ){
+          $('#city').replaceWith('<h3 id="city" class="text-center">'+ Locname +'</h4>');
+
           var gbound = new google.maps.LatLngBounds();
           gbound.extend({lat: latlng.lat(), lng: latlng.lng()});
 
@@ -137,45 +162,44 @@ function ViewModel() {
           var i=0;
           var j=0;
 
-          while(i<3&&j<20){
+          while(i<3 && j<20){
             j++;
             //self.gasArray.push(response.businesses[i]);
             var markerlatlng = {lat: response.businesses[j].coordinates.latitude, 
                                 lng: response.businesses[j].coordinates.longitude};
             console.log(response.businesses[j]);
 
-              
-            $('#gas_title'+i).replaceWith('<div id="gas_title'+ i +'"><h4>'+response.businesses[j].name+'</h4><h5>'+response.businesses[j].location.display_address[0]+'<br>'+response.businesses[j].location.display_address[1]+'</h5></div>')
+            
+            $('#gas_title'+i).replaceWith('<div id="gas_title'+ i +'"><strong>'+response.businesses[j].name+'</strong><h5>'+response.businesses[j].location.display_address[0]+'<br>'+response.businesses[j].location.display_address[1]+'</h5></div>')
             $('#gas_img'+i).replaceWith('<img width="100%" id="gas_img'+ i +'" src="'+response.businesses[j].image_url+'" width="200px" meters away</img>')
-            $('#gas_distance'+i).replaceWith('<p id="gas_distance'+ i +'">'+response.businesses[j].distance+' meters away</p>')
+            $('#gas_distance'+i).replaceWith('<p id="gas_distance'+ i +'">'+response.businesses[j].distance.toFixed(0)+' meters away</p>')
             i++;
             if (!(markerlatlng.lat&&markerlatlng.lng))
                 continue;  
-              var title = response.businesses[j].name;
-              var type = response.businesses[j].categories;
+            var title = response.businesses[j].name;
+            var type = response.businesses[j].categories;
               //create and push the marker
-              var marker = new google.maps.Marker({
+            var marker = new google.maps.Marker({
                   position: markerlatlng,
                   map: self.map,
                   title: title,
                   type: type,
                   animation: google.maps.Animation.DROP,
                   icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-              });
-              gmarkers.push(marker);
+            });
+            gmarkers.push(marker);
               // make the marker within bound
-              gbound.extend(marker.position);
+            gbound.extend(marker.position);
               // Set infowindow
-              var infowindow = new google.maps.InfoWindow();
-              marker.addListener("click", function(){
-                  popInfowindowg(this, infowindow);
-              });
+            var infowindow = new google.maps.InfoWindow();
+            marker.addListener("click", function(){
+                popInfowindowg(this, infowindow);
+            });
               //i++;
           };
           self.map.fitBounds(gbound);
-
       }});
-      }; 
+    }; 
 
     function popInfowindowg(marker, infowindow){
             if (infowindow.marker != marker) {
@@ -236,14 +260,14 @@ function ViewModel() {
             // Set infowindow
             self.infowindow = new google.maps.InfoWindow();
             marker.addListener("click", function(){
-                renderComments(this.position);
-
+                toggleBounce(this);
+                renderComments(this.position, this.title);
                 popInfowindow(this, self.infowindow);
             });
         };
 
         self.map.fitBounds(self.bound);
-        google.maps.event.addListenerOnce(self.map, 'bounds_changed', function(event) {
+        google.maps.event.addListenerOnce(self.map, 'bounds_changed', function(event){
             if (this.getZoom() > 15) {
                 this.setZoom(14);
             };
@@ -251,8 +275,8 @@ function ViewModel() {
     };
     
     this.processing = function() {
-        
     }
+
     this.load = function loadData(fulladdr) {
         var address = self.fulladdr();
         address = address.split(' ').join('+');
