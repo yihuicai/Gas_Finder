@@ -134,7 +134,10 @@ header {
   }
   #info{
     position: absolute;
-    right: 10px;
+    width: 90%;
+    margin: auto;
+    top: 60vmax;
+    right: 20px;
     z-index: 10; 
     background-color: white;
     border: solid 1px grey;

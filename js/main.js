@@ -28,6 +28,11 @@ function ViewModel() {
     var bound;
     var gmarkers=[];
     this.placeArray=ko.observableArray([
+        {latlng : { lat: 37.8718897, lng: -122.2632496 },
+         location : "University+of+California,+Berkeley+Berkeley,+CA+94720",
+         type : "Others",
+         name : "UC Berkeley",
+         remember : false},
         {latlng : { lat: 37.4219999, lng: -122.0862462 },
          location : "1600 Amphitheatre Pkwy+Mountain View+California+94043",
          type : "Company",
