@@ -27,8 +27,17 @@ function ViewModel() {
     },this);
     var bound;
     var gmarkers=[];
-
     this.placeArray=ko.observableArray([
+        {latlng : { lat: 37.4219999, lng: -122.0862462 },
+         location : "1600 Amphitheatre Pkwy+Mountain View+California+94043",
+         type : "Company",
+         name : "Google",
+         remember : false},
+        {latlng : { lat: 37.3746291, lng: -121.894227 },
+         location : "15350 Penitencia Creek Rd+San+Jose+California+95127",
+         type : "Park",
+         name : "Alum Rock Park",
+         remember : false},
         {latlng : { lat: 37.4158559, lng: -121.8975733 },
          location : "447 Great Mall Dr+Milpitas+California+95035",
          type : "Others",
