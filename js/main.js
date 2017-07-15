@@ -58,25 +58,26 @@ function ViewModel() {
         }
     ]);
     this.hideAll=function(){
+      //let the bouncing markers stop
       if(bounce){
         toggleBounce(bounce);
         self.infowindow.marker=null;
         self.infowindow.close();
       }
-
       for (var i=0;i<Object.keys(self.markers()).length; i++)
         self.markers()[i].setMap(null);
       for (i=0; i<gmarkers.length;i++)
         gmarkers[i].setMap(null);
+      //clear all gas markers
       gmarkers.length=0;
     };
 
     this.showAll=function(){
-      for (i=0; i<gmarkers.length;i++)
-        gmarkers[i].setMap(null);
-      gmarkers.length=0;      
-      for (var i=0;i<Object.keys(self.markers()).length; i++)
+      self.hideAll();
+      for (var i=0;i<Object.keys(self.markers()).length; i++){
         self.markers()[i].setMap(self.map);
+        self.bound.extend(self.markers()[i].position);
+      }
     };
 
     this.searchQuery=ko.observable();
@@ -98,7 +99,6 @@ function ViewModel() {
       }
       return this.ret();
     });
-
 
     var infowindow;
     this.f_new_place=ko.observable(false);
@@ -123,9 +123,7 @@ function ViewModel() {
         }
         if(self.f_big_map()===true){
             $("#map_wrapper").removeClass("smallmap");
-        }
-        
-        self.initMap();
+        }        
     });
 
     $("#find").on("click", function(){
@@ -193,8 +191,8 @@ function ViewModel() {
           self.show_gas.removeAll();
           self.showname(Locname);
           //$('#city').replaceWith('<h3 id="city" class="text-center">'+ Locname +'</h4>');
-          var gbound = new google.maps.LatLngBounds();
-          gbound.extend({lat: latlng.lat(), lng: latlng.lng()});
+          self.bound = new google.maps.LatLngBounds();
+          self.bound.extend({lat: latlng.lat(), lng: latlng.lng()});
           for(var i=0;i<gmarkers.length;i++){
             gmarkers[i].setMap(null);
           }
@@ -219,8 +217,6 @@ function ViewModel() {
             $('#gas_img'+i).replaceWith('<img width="100%" id="gas_img'+ i +'" src="'+response.businesses[j].image_url+'" width="200px" meters away</img>');
             $('#gas_distance'+i).replaceWith('<p id="gas_distance'+ i +'">'+response.businesses[j].distance.toFixed(0)+' meters away</p>');
             */
-
-
             i++;
             if (!(markerlatlng.lat&&markerlatlng.lng))
                 continue;  
@@ -237,16 +233,16 @@ function ViewModel() {
             });
             gmarkers.push(self.marker);
               // make the marker within bound
-            gbound.extend(self.marker.position);
+            self.bound.extend(self.marker.position);
               // Set infowindow
             infowindow = new google.maps.InfoWindow();
             self.addgMarker(self.marker);
           }
-          self.boundSet(gbound);
+          self.boundSet(self.bound);
           self.map.setCenter(latlng);
 
 
-      }}).error(function(){
+      }}).fail(function(){
         alert("Cannot load Yelp API to retreive the gas stations info.");
       });
     }
@@ -291,16 +287,13 @@ function ViewModel() {
     this.initMap= function initMap(){
         // Constructor creates a new map
         this.map = new google.maps.Map(document.getElementById('map'), {
-          center: self.placeArray()[0].latlng, //{lat: 40.7413549, lng: -73.9980244},
+          center: self.placeArray()[0].latlng,
           zoom: 14
         });    
         self.Mapset();
     };
     this.Mapset = function (){
       self.bound = new google.maps.LatLngBounds();
-      google.maps.event.addDomListener(window, 'resize', function() {
-        self.map.fitBounds(self.bound); // `bounds` is a `LatLngBounds` object
-      });
       self.markers.removeAll();
                 //loop over placeArray and set markers
       for(var i=0; i<Object.keys(self.placeArray()).length;i++){
@@ -326,7 +319,6 @@ function ViewModel() {
     };
     this.boundSet= function(bound){
         self.map.fitBounds(bound);
-        console.log(self.map.getZoom());
         google.maps.event.addListenerOnce(self.map, 'bounds_changed', function(event){
             if (self.map.getZoom() > 13) {
                 self.map.setZoom(13);
@@ -371,7 +363,20 @@ function ViewModel() {
           $("#map").text("Google Maps cannot be loaded.");
         };
 }
+/*
+       * Open the drawer when the menu ison is clicked.
+       */
+var menu = document.querySelector('#menu');
+var main = document.querySelector('main');
+var drawer = document.querySelector('.nav');
+menu.addEventListener('click', function(e) {
+  drawer.classList.toggle('open');
+  e.stopPropagation();
+});
 
+main.addEventListener('click', function() {
+  drawer.classList.remove('open');
+});      
 
 var vm = new ViewModel();
 ko.applyBindings(vm);

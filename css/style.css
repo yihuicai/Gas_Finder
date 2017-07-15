@@ -63,7 +63,7 @@ p {
   color: grey;
 }
 
-#showall {
+.showall {
   font-size: 12px;
 }
 
@@ -161,6 +161,7 @@ p {
 }
 
 @media screen and (max-width: 650px) {
+
   .gas_img {
     height: 40vw;    
     width: 60%;

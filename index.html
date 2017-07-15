@@ -2,10 +2,10 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-
         <link href="css/bootstrap.css"  rel="stylesheet" type="text/css">
         <link href="css/style.css"  rel="stylesheet" type="text/css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Alan's Gas Finder</title>
     </head>
     <body>
         <div class="big">
@@ -21,10 +21,10 @@
         </header>
 	    <nav id="drawer" class="nav"> 
 		    <ul class="nav__list">
-		        <li class="nav__item"><button class="btn btn-primary" id="add" href="#">Add places</button></li>
-		        <li class="nav__item"><button class="btn btn-success" id="find" href="#">See places</button></li>
-		        <li class="nav__item"><button class="btn btn-info" data-bind="click: remain" href="#">Save places</button></li>
-		        <li class="nav__item"><button class="btn btn-warning" data-bind="click: remain" href="#">About Author</button></li>
+		        <li class="nav__item"><button class="btn btn-primary" id="add">Add places</button></li>
+		        <li class="nav__item"><button class="btn btn-success" id="find">See places</button></li>
+		        <li class="nav__item"><button class="btn btn-info" data-bind="click: remain" >Save places</button></li>
+		        <li class="nav__item"><button class="btn btn-warning" data-bind="click: remain">About Author</button></li>
 		    </ul>
 		</nav>
         </div>
@@ -34,19 +34,20 @@
                     <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <br>
                     <div class="form-group">
-                        <label for="name">Filter</label>
-                        <input type="name" class="form-control" data-bind="textInput: searchQuery" placeholder="Enter your place to search">
+                        <label>Filter</label>
+                        <input type="search" class="form-control" data-bind="textInput: searchQuery" placeholder="Enter your place">
                     </div>
-                    <button class="btn btn-default" id="showall" href="#" data-bind="click: showAll">Show All</button>
-                    <button class="btn btn-default" id="showall" href="#" data-bind="click: hideAll">Hide All</button>
+                    <button class="btn btn-default showall" data-bind="click: showAll">Show All</button>
+                    <button class="btn btn-default showall" data-bind="click: hideAll">Hide All</button>
                     <br>
                     <br>
                     <strong>Places</strong>
-                    <ul data-bind="foreach: placeArrayResult" class="list-group">
-                        <li class="list-group-item"><a href="#" data-bind="text : name, click: $parent.viewPlace"></a></li>
-                        <li data-bind="text : type" class="list-group-item"></li>
-                        <br>
-                    </ul>
+                    <div class="col-xs-11 text-center" data-bind="foreach: placeArrayResult">
+                        <ul  class="list-group">
+                            <li class="list-group-item"><a href="#" data-bind="text : name, click: $parent.viewPlace"></a></li>
+                            <li data-bind="text : type" class="list-group-item"></li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="col-xs-12" id="map_wrapper" >
                     <div id="map"></div>
@@ -55,7 +56,7 @@
                     <div class="row thumbnail" data-bind="foreach : show_gas">
                         <div class="col-xs-4 text-center w">  
                             <p data-bind="text : distance"></p>
-                            <img data-bind="attr : {src : img}" class="gas_img" ></img>                      
+                            <img data-bind="attr : {src : img}" class="gas_img" alt="Image of one of the gas stations">                     
                             <p data-bind="text : name">Select a marker in the map</p>
                             <p data-bind="text : address0"></p>
                             <p data-bind="text : address1"></p>
@@ -66,75 +67,59 @@
                     <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <br>
                     <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="name" class="form-control" data-bind="value: name" placeholder="Name">
+                        <label>Name</label>
+                        <input type="text" class="form-control" data-bind="value: name" placeholder="Name">
                     </div>
-                    <label for="type">Type</label>
+                    <label>Type</label>
                     <select class="form-control" data-bind="options: types, value: type, optionsCaption: 'Choose a type'"></select>
                     <br>
                     <div class="form-group">
-                        <label for="address">Street (Place) Name</label>
-                        <input type="street" class="form-control" data-bind="value: street" placeholder="e.g. 100 Yourstreet st">
+                        <label>Street (Place) Name</label>
+                        <input type="text" class="form-control" data-bind="value: street" placeholder="e.g. 100 Yourstreet st">
                     </div>
                     <div class="form-group">
-                        <label for="address">City/County</label>
-                        <input type="city" class="form-control" data-bind="value: city" placeholder="City / County">
+                        <label>City/County</label>
+                        <input type="text" class="form-control" data-bind="value: city" placeholder="City / County">
                     </div>
-                    <label for="state">State</label>
+                    <label>State</label>
                     <select class="form-control" data-bind="options: states, value: state, optionsCaption: 'Select a state'"></select>
                     <br>
                     <div class="form-group">
-                        <label for="Zipcode">Zipcode/Country</label>
-                        <input type="zipcode" class="form-control" data-bind="value: zipcode"  placeholder="Your zipcode: e.g. 12345">
+                        <label>Zipcode/Country</label>
+                        <input type="text" class="form-control" data-bind="value: zipcode"  placeholder="Your zipcode: e.g. 12345">
                     </div>
                     <div class="checkbox">
                         <label>
                             <input type="checkbox" data-bind="checked: remember" > Remember this address
                         </label>
                     </div>
-                    <a type="submit" id="submit" class="btn btn-default" data-bind="css: valid, click: load">Submit</a>
+                    <a id="submit" class="btn btn-default" data-bind="css: valid, click: load">Submit</a>
                 </form> 
             </div>
   	  		<div class="row">
                 <p class="col-xs-12 powerby">Power BY</p>
                 <div class="text-center">
-                    <img src="http://cdn.ttgtmedia.com/ITKE/uploads/blogs.dir/317/files/2016/09/1yelpoewifiuwgf.jpg" class="copyright">
-                    <img src="http://www.adweek.com/wp-content/uploads/sites/2/2015/11/Google-Maps.png" class="copyright">
+                    <img src="http://cdn.ttgtmedia.com/ITKE/uploads/blogs.dir/317/files/2016/09/1yelpoewifiuwgf.jpg" class="copyright" alt="yelp fusion api">
+                    <img src="http://www.adweek.com/wp-content/uploads/sites/2/2015/11/Google-Maps.png" class="copyright" alt="google maps api">
                 </div>
   	  		</div>
   	    </main>
+        <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+        <script>
+            var config = {
+                apiKey: "AIzaSyDWPUcOwALBoUG-j_5vR-Qifd21IVXiZSs",
+                authDomain: "alans-gas-station.firebaseapp.com",
+                databaseURL: "https://alans-gas-station.firebaseio.com",
+                projectId: "alans-gas-station",
+                storageBucket: "",
+                messagingSenderId: "1062835632013"
+            };
+            firebase.initializeApp(config);            // Initialize Firebase
+        </script>
+        <script src="js/jquery-3.2.1.min.js"></script>
+        <script src="js/knockout-3.4.2.js"></script>
+        <script src="js/main.js"></script>
+        <script async defer onerror="vm.mapError()" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg&callback=vm.initMap">
+        </script>
     </body>
-    <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
-    <script>
-    var config = {
-        apiKey: "AIzaSyDWPUcOwALBoUG-j_5vR-Qifd21IVXiZSs",
-        authDomain: "alans-gas-station.firebaseapp.com",
-        databaseURL: "https://alans-gas-station.firebaseio.com",
-        projectId: "alans-gas-station",
-        storageBucket: "",
-        messagingSenderId: "1062835632013"
-    };
-    firebase.initializeApp(config);            // Initialize Firebase
-    </script>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/knockout-3.4.2.js"></script>
-    <script src="js/main.js"></script>
-    <script async defer onerror="vm.mapError()" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg&callback=vm.initMap">
-    </script>
-    <script>
-      /*
-       * Open the drawer when the menu ison is clicked.
-       */
-      var menu = document.querySelector('#menu');
-      var main = document.querySelector('main');
-      var drawer = document.querySelector('.nav');
-
-      menu.addEventListener('click', function(e) {
-        drawer.classList.toggle('open');
-        e.stopPropagation();
-      });
-      main.addEventListener('click', function() {
-        drawer.classList.remove('open');
-      });
-    </script>
 </html>
