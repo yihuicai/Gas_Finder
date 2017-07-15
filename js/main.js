@@ -122,10 +122,10 @@ function ViewModel() {
             self.f_new_place(false);
         }
         if(self.f_small_map()===false){
-            $("#map_wrapper").removeClass("tinymap");
+            $("#map_wrapper").removeClass("col-xs-6");
         }
         if(self.f_big_map()===true){
-            $("#map_wrapper").removeClass("smallmap");
+            $("#map_wrapper").removeClass("col-xs-9");
         }        
     });
 
@@ -133,9 +133,9 @@ function ViewModel() {
          $("#info").removeClass("noshow");
          self.f_findPlace(true);
          if(self.f_big_map()===false){
-            var add="smallmap";
+            var add="col-xs-9";
             if(self.f_small_map()===true){
-              add="tinymap";
+              add="col-xs-6";
             }
             $("#map_wrapper").addClass(add);
          }
@@ -144,9 +144,9 @@ function ViewModel() {
          $("#getaddr").removeClass("noshow");
          self.f_new_place(true);
          if(self.f_big_map()===false){
-            var add="smallmap";
+            var add="col-xs-9";
             if(self.f_small_map()===true){
-              add="tinymap";
+              add="col-xs-6";
             }
             $("#map_wrapper").addClass(add);
          }
@@ -370,9 +370,13 @@ function ViewModel() {
           $("#map").text("Google Maps cannot be loaded.");
         };
 }
+
+var vm = new ViewModel();
+ko.applyBindings(vm);
+
 /*
        * Open the drawer when the menu ison is clicked.
-       */
+*/
 var menu = document.querySelector('#menu');
 var main = document.querySelector('.main');
 var drawer = document.querySelector('.nav');
@@ -395,8 +399,7 @@ var config = {
 };
 firebase.initializeApp(config);            // Initialize Firebase
 
-var vm = new ViewModel();
-ko.applyBindings(vm);
+
     
 
 

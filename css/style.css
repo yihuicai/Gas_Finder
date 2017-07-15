@@ -1,3 +1,7 @@
+.main {
+  margin-top: 10px;
+}
+
 ul {
   list-style: none;
   font-size: 12px;
@@ -88,7 +92,7 @@ p {
 
 #getaddr {
     padding: 5px;
-    margin: 5px;
+    margin: auto;
     border: solid 2px #dcdcdc;
 }
 
@@ -117,7 +121,7 @@ p {
   text-indent: -12px;
 }
 
-@media screen and (min-width: 651px) {
+@media screen and (min-width: 770px) {
 
   .tinymap {
     width: 45%;
@@ -146,10 +150,9 @@ p {
   }
 
   #info {
-    width: 25%;
-    max-width: 280px;
+    /*width: 25%;
+    max-width: 220px;*/
     padding: 10px;
-    margin: 5px;
     border: solid 2px #dcdcdc;
   }
 
@@ -158,7 +161,7 @@ p {
   }
 }
 
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 769px) {
 
   .gas_img {
     width: 60%;
@@ -175,9 +178,8 @@ p {
   #info {
     position: absolute;
     padding: 10px;
-    width: 50%;
-    min-width: 250px;
-    top: 60vmax;
+    min-width: 220px;
+    top: calc( 625px - 1.2 * 60vw );
     z-index: 10; 
     background-color: white;
     border: solid 2px #dcdcdc;
@@ -190,7 +192,8 @@ p {
   }
   
   #getaddr {
-    width: 95%;
+    width: 100%;
+    margin: 5px auto;
   }
   
   .header__title {
