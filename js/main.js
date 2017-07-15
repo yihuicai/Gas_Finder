@@ -1,5 +1,6 @@
 function ViewModel() {
     var self=this;
+    this.showname=ko.observable();
     this.name=ko.observable();
     this.map=ko.observable();
     this.marker=ko.observable();
@@ -10,6 +11,7 @@ function ViewModel() {
     this.local=ko.observable({latitude: 37.4191334, longitude: -121.896173315});
 	  this.street= ko.observable();
     this.city= ko.observable();
+    this.show_gas=ko.observableArray([]);
     this.states= ko.observableArray(['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 
             'Delaware', 'Florida', 'Georgia' ,'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
             'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri',
@@ -66,13 +68,13 @@ function ViewModel() {
         self.markers()[i].setMap(null);
       for (i=0; i<gmarkers.length;i++)
         gmarkers[i].setMap(null);
-      gmarkers=[];
+      gmarkers.length=0;
     };
 
     this.showAll=function(){
       for (i=0; i<gmarkers.length;i++)
         gmarkers[i].setMap(null);
-      gmarkers=[];      
+      gmarkers.length=0;      
       for (var i=0;i<Object.keys(self.markers()).length; i++)
         self.markers()[i].setMap(self.map);
     };
@@ -90,8 +92,6 @@ function ViewModel() {
             if(self.markers()[i].title.startsWith(self.searchQuery())){
               self.markers()[i].setMap(self.map);
               ret.push(self.placeArray()[i]);
-              //renderComments(self.markers()[i].position,self.markers()[i].title);
-              //popInfowindow(self.markers()[i], self.infowindow)
             }
           }
         }
@@ -160,7 +160,9 @@ function ViewModel() {
         else{
           self.markers()[i].setMap(self.map);
           toggleBounce(self.markers()[i]);
-          renderComments(self.markers()[i].position,self.markers()[i].title);
+          if(gmarkers.length===0||self.showname()===place.name){
+            renderComments(self.markers()[i].position,self.markers()[i].title);
+          }
           popInfowindow(self.markers()[i], self.infowindow);
         }
       }
@@ -178,7 +180,6 @@ function ViewModel() {
         bounce=marker;
       }
     }
-
     function renderComments(latlng,Locname){
       $.ajax({
         crossDomain : true,
@@ -189,14 +190,15 @@ function ViewModel() {
         'authorization': 'Bearer IyepryQA29OGHKN0Hyw2aLBVg0rYRlsc-Fqxz2DYBtjRhP4mv8nT_4bjIybvOr3A6p8oNcGESXPGsygBBQmVB24X3ZHmD0XzJNJSxULgJNeKP5igN20QtU99cK5eWXYx'
         },
         success: function( response ){
-          $('#city').replaceWith('<h3 id="city" class="text-center">'+ Locname +'</h4>');
-
+          self.show_gas.removeAll();
+          self.showname(Locname);
+          //$('#city').replaceWith('<h3 id="city" class="text-center">'+ Locname +'</h4>');
           var gbound = new google.maps.LatLngBounds();
           gbound.extend({lat: latlng.lat(), lng: latlng.lng()});
           for(var i=0;i<gmarkers.length;i++){
             gmarkers[i].setMap(null);
           }
-          gmarkers=[];
+          gmarkers.length=0;
           i=0;
           var j=0;
 
@@ -204,10 +206,21 @@ function ViewModel() {
             j++;
             var markerlatlng = {lat: response.businesses[j].coordinates.latitude, 
                                 lng: response.businesses[j].coordinates.longitude};
-            console.log(response.businesses[j]);
+            self.show_gas.push({
+              distance : response.businesses[j].distance.toFixed(0) + " meters away",
+              img : response.businesses[j].image_url,
+              name : response.businesses[j].name,
+              address0 : response.businesses[j].location.display_address[0],
+              address1 : response.businesses[j].location.display_address[1]
+            })
+
+            /*
             $('#gas_title'+i).replaceWith('<div id="gas_title'+ i +'"><strong>'+response.businesses[j].name+'</strong><h5>'+response.businesses[j].location.display_address[0]+'<br>'+response.businesses[j].location.display_address[1]+'</h5></div>');
             $('#gas_img'+i).replaceWith('<img width="100%" id="gas_img'+ i +'" src="'+response.businesses[j].image_url+'" width="200px" meters away</img>');
             $('#gas_distance'+i).replaceWith('<p id="gas_distance'+ i +'">'+response.businesses[j].distance.toFixed(0)+' meters away</p>');
+            */
+
+
             i++;
             if (!(markerlatlng.lat&&markerlatlng.lng))
                 continue;  
@@ -239,27 +252,27 @@ function ViewModel() {
     }
 
     this.addgMarker= function(marker){
-        marker.addListener("click", function(){
-                popInfowindowg(this, self.infowindow);
-            });
+      marker.addListener("click", function(){
+          popInfowindowg(this, self.infowindow);
+          if(bounce)
+            toggleBounce(bounce);
+      });
     };
 
     function popInfowindowg(marker, infowindow){
-            if (infowindow.marker !== marker) {
-              infowindow.marker = marker;
-              var content='<strong>' + marker.title+'</strong>';
-              for (var i=0;i<marker.type.length;i++){
-                content += '<div width="100px">'+ marker.type[i].title+'</div>';
-              }
-              infowindow.setContent(content);
-
-              infowindow.open(self.map, marker);
+      if (infowindow.marker !== marker) {
+        infowindow.marker = marker;
+        var content='<strong>' + marker.title+'</strong>';
+        for (var i=0;i<marker.type.length;i++){
+          content += '<div width="100px">'+ marker.type[i].title+'</div>';
+        }
+        infowindow.setContent(content);
+        infowindow.open(self.map, marker);
               // Make sure the marker property is cleared if the infowindow is closed.
-             google.maps.event.addListenerOnce(infowindow, 'closeclick', function(event) {
-                infowindow.marker=null;
-              }); 
-
-            }
+        google.maps.event.addListenerOnce(infowindow, 'closeclick', function(event) {
+          infowindow.marker=null;
+        }); 
+      }
     }
     function popInfowindow(marker, infowindow){
         if (infowindow.marker != marker) {
@@ -269,45 +282,48 @@ function ViewModel() {
           // Make sure the marker property is cleared if the infowindow is closed.
           google.maps.event.addListenerOnce(infowindow, 'closeclick', function(event) {
             infowindow.marker=null;
-            toggleBounce(marker);
-          }); 
-
+            if(bounce)
+              toggleBounce(marker);
+          });
         }
     }
 
-    this.initMap= function initMap() {
+    this.initMap= function initMap(){
         // Constructor creates a new map
         this.map = new google.maps.Map(document.getElementById('map'), {
           center: self.placeArray()[0].latlng, //{lat: 40.7413549, lng: -73.9980244},
           zoom: 14
-        });
+        });    
         self.Mapset();
     };
     this.Mapset = function (){
       self.bound = new google.maps.LatLngBounds();
-        self.markers.removeAll();
+      google.maps.event.addDomListener(window, 'resize', function() {
+        self.map.fitBounds(self.bound); // `bounds` is a `LatLngBounds` object
+      });
+      self.markers.removeAll();
                 //loop over placeArray and set markers
-        for(var i=0; i<Object.keys(self.placeArray()).length;i++){
-            var markerlatlng = self.placeArray()[i].latlng;
-            var title = self.placeArray()[i].name;
-            var type = self.placeArray()[i].type;
+      for(var i=0; i<Object.keys(self.placeArray()).length;i++){
+        var markerlatlng = self.placeArray()[i].latlng;
+        var title = self.placeArray()[i].name;
+        var type = self.placeArray()[i].type;
             //create and push the marker
-            self.marker = new google.maps.Marker({
-                position: markerlatlng,
-                map: self.map,
-                title: title,
-                type: type,
-                animation: google.maps.Animation.DROP
-            });
-            self.markers.push(self.marker);
+        self.marker = new google.maps.Marker({
+          position: markerlatlng,
+          map: self.map,
+          title: title,
+          type: type,
+          animation: google.maps.Animation.DROP
+        });
+        self.markers.push(self.marker);
             // make the marker within bound
-            self.bound.extend(self.marker.position);
+        self.bound.extend(self.marker.position);
             // Set infowindow
-            self.infowindow = new google.maps.InfoWindow();
-            self.addMarker(self.marker);
-        }
+        self.infowindow = new google.maps.InfoWindow();
+        self.addMarker(self.marker);
+      }
         self.boundSet(self.bound);
-      };
+    };
     this.boundSet= function(bound){
         self.map.fitBounds(bound);
         console.log(self.map.getZoom());
@@ -318,11 +334,13 @@ function ViewModel() {
         });
     };
     this.addMarker= function(marker){
-        marker.addListener("click", function(){
-                toggleBounce(marker);
-                renderComments(marker.position, marker.title);
-                popInfowindow(marker, self.infowindow);
-            });
+      marker.addListener("click", function(){
+        toggleBounce(marker);
+        if(gmarkers.length===0||self.showname()!==marker.title){
+          renderComments(marker.position, marker.title);
+        }
+        popInfowindow(marker, self.infowindow);
+      });
     };
     
     this.load = function loadData(fulladdr) {
@@ -330,7 +348,7 @@ function ViewModel() {
         address = address.split(' ').join('+');
         var locationurl="https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg";
         var addNewlocation=$.getJSON(locationurl, function(data){
-            if(data.result==null){
+            if(data.results==null){
               alert("Cannot find the place. please write it precisely!")
               return 0;
             }

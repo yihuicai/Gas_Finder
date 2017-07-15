@@ -5,7 +5,28 @@ ul {
   padding: 0;
   margin: 0;
 }
-a{
+
+.gas_img {
+  width: 100%;
+  height: 20vw;
+  margin: 10px;
+  border-radius: 10px;
+}
+
+#city{
+  margin: 20px;
+}
+
+.copyright {
+  opacity: 0.8;
+  height: 80px;
+  width: auto;
+  margin: 0 10px 5px 0;
+  border: solid 1px #98afc7;
+  border-radius: 10px;
+}
+
+a {
   text-decoration: none;
 }
 
@@ -16,28 +37,33 @@ header {
 main {
   margin-top: 10px;
 }
+
 .header__menu {
   display: none;
 }
+
 .header__inner {
   text-align: center;
 }
-.w{
+
+.w {
   background-color: #fffff0;
   padding: 10px;
   margin: 0;       
 }
+
 .noshow {
     display: none;
-
 }
 
 p {
   word-break: break-all;
   word-wrap: break-word;
   text-align: center;
+  color: grey;
 }
-#showall{
+
+#showall {
   font-size: 12px;
 }
 
@@ -86,53 +112,66 @@ p {
   text-decoration: underline;
   color: #212121;
 }
-.smallmap{
-    width: 72%;
+.smallmap {
+  width: 72%;
 }
+
+.powerby {
+  letter-spacing: 7px;
+  text-transform: uppercase;
+  text-indent: -12px;
+}
+
 @media screen and (min-width: 651px) {
 
-.tinymap{
-  width: 45%;
-}
+  .tinymap {
+    width: 45%;
+  }
 
-.big{
-    box-sizing: border-box;
-    border-bottom: solid 1px grey;
-}
-.nav__item{
-    padding: 24px 0;
-}
-.big {
-    display: inline-flex;
-    width: 100%;
-}
-.header__inner{
-    padding-bottom: 10px;
-}
-header {
-    width: 33%;
-}
-#info{
-  width: 28%;
-  max-width: 280px;
-}
-.nav {
-    width: 100%;
-}
+  .big {
+      box-sizing: border-box;
+      border-bottom: solid 1px grey;
+  }
+
+  .nav__item {
+      padding: 24px 0;
+  }
+
+  .big {
+      display: inline-flex;
+      width: 100%;
+  }
+
+  .header__inner {
+      padding-bottom: 10px;
+  }
+
+  header {
+      width: 33%;
+  }
+
+  #info {
+    width: 28%;
+    max-width: 280px;
+  }
+
+  .nav {
+      width: 100%;
+  }
 }
 
 @media screen and (max-width: 650px) {
-  .w{
-        width: 100%;
-        color:#696969;
+  .gas_img {
+    height: 40vw;    
+    width: 60%;
+  }
 
+  .w {
+    width: 100%;
+    color:#696969;
   }
-  img {
-    width: 80%;
-    max-width: 400px;
-    border-radius: 10px
-  }
-  #info{
+
+  #info {
     position: absolute;
     width: 90%;
     margin: auto;
@@ -141,22 +180,24 @@ header {
     z-index: 10; 
     background-color: white;
     border: solid 1px grey;
-
   }
 
-  #map_wrapper{
-        width: 100%;
-        margin: auto;
-        padding: 5px;
-    }
-  #getaddr{
-        width: 95%;
-    }
+  #map_wrapper {
+    width: 100%;
+    margin: auto;
+    padding: 5px;
+  }
+  
+  #getaddr {
+    width: 95%;
+  }
+  
   .header__title {
     margin-left: 0;
     font-size: 2em;
     vertical-align: bottom; 
   }
+  
   .nav {
     border-bottom: solid 1px grey;
     border-right: solid 2px grey;
@@ -170,21 +211,25 @@ header {
     /* Optionally, we animate the drawer. */
     transition: transform 0.3s ease;
   }
+  
   .nav.open {
     -webkit-transform: translate(0, 0);
     transform: translate(0, 0);
   }
+  
   .nav__item {
     display: list-item;
     border-bottom: 1px solid #E0E0E0;
     width: 100%;
     text-align: left;
   }
+  
   .header__menu {
     display: inline-block;
     padding: 10px;
     z-index: 11;
   }
+  
   .header__menu svg {
     width: 20px;
     fill: #E0E0E0;

@@ -2,21 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
-        <script>
-            // Initialize Firebase
-          var config = {
-            apiKey: "AIzaSyDWPUcOwALBoUG-j_5vR-Qifd21IVXiZSs",
-            authDomain: "alans-gas-station.firebaseapp.com",
-            databaseURL: "https://alans-gas-station.firebaseio.com",
-            projectId: "alans-gas-station",
-            storageBucket: "",
-            messagingSenderId: "1062835632013"
-          };
-          firebase.initializeApp(config);
-        </script>
-        <script src="js/jquery.min.js"></script>
-        <script src="js/knockout-3.4.2.js"></script>
+
         <link href="css/bootstrap.css"  rel="stylesheet" type="text/css">
         <link href="css/style.css"  rel="stylesheet" type="text/css">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -64,24 +50,15 @@
                 </div>
                 <div class="col-xs-12" id="map_wrapper" >
                     <div id="map"></div>
-                    <h5 class="text-center">The Three Gas Stations Near</h5>
-                    <h3 id="city" class="text-center"></h3>
-                    <div class="row">
+                    <h4 class="text-center">The Three Gas Stations Near</h4>
+                    <h3 id="city" class="text-center" data-bind="text : showname"></h3>
+                    <div class="row thumbnail" data-bind="foreach : show_gas">
                         <div class="col-xs-4 text-center w">  
-                            <p id="gas_distance0"></p>
-                            <p id="gas_img0"></p>                      
-                            <p id="gas_title0">Select a marker in the map</p>
-                        </div>
-                        <div class="col-xs-4 text-center w">
-                            <p id="gas_distance1"></p>
-                            <p id="gas_img1"></p>
-                            <p id="gas_title1">Make it visible</p>
-                        </div>
-                        <div class="col-xs-4 text-center w">
-                            <p id="gas_distance2"></p>
-                            <p id="gas_img2"></p>
-                            <p id="gas_title2">Here!</p>
-
+                            <p data-bind="text : distance"></p>
+                            <img data-bind="attr : {src : img}" class="gas_img" ></img>                      
+                            <p data-bind="text : name">Select a marker in the map</p>
+                            <p data-bind="text : address0"></p>
+                            <p data-bind="text : address1"></p>
                         </div>
                     </div>
                 </div>
@@ -100,14 +77,14 @@
                         <input type="street" class="form-control" data-bind="value: street" placeholder="e.g. 100 Yourstreet st">
                     </div>
                     <div class="form-group">
-                        <label for="address">City</label>
+                        <label for="address">City/County</label>
                         <input type="city" class="form-control" data-bind="value: city" placeholder="City / County">
                     </div>
                     <label for="state">State</label>
                     <select class="form-control" data-bind="options: states, value: state, optionsCaption: 'Select a state'"></select>
                     <br>
                     <div class="form-group">
-                        <label for="Zipcode">Zipcode</label>
+                        <label for="Zipcode">Zipcode/Country</label>
                         <input type="zipcode" class="form-control" data-bind="value: zipcode"  placeholder="Your zipcode: e.g. 12345">
                     </div>
                     <div class="checkbox">
@@ -118,17 +95,33 @@
                     <a type="submit" id="submit" class="btn btn-default" data-bind="css: valid, click: load">Submit</a>
                 </form> 
             </div>
-            <br>
   	  		<div class="row">
-  	    		<p class="col-xs-12 w">A dedicated work by Alan</p>
+                <p class="col-xs-12 powerby">Power BY</p>
+                <div class="text-center">
+                    <img src="http://cdn.ttgtmedia.com/ITKE/uploads/blogs.dir/317/files/2016/09/1yelpoewifiuwgf.jpg" class="copyright">
+                    <img src="http://www.adweek.com/wp-content/uploads/sites/2/2015/11/Google-Maps.png" class="copyright">
+                </div>
   	  		</div>
   	    </main>
     </body>
+    <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+    <script>
+    var config = {
+        apiKey: "AIzaSyDWPUcOwALBoUG-j_5vR-Qifd21IVXiZSs",
+        authDomain: "alans-gas-station.firebaseapp.com",
+        databaseURL: "https://alans-gas-station.firebaseio.com",
+        projectId: "alans-gas-station",
+        storageBucket: "",
+        messagingSenderId: "1062835632013"
+    };
+    firebase.initializeApp(config);            // Initialize Firebase
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/knockout-3.4.2.js"></script>
     <script src="js/main.js"></script>
     <script async defer onerror="vm.mapError()" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg&callback=vm.initMap">
     </script>
     <script>
-    
       /*
        * Open the drawer when the menu ison is clicked.
        */
@@ -143,6 +136,5 @@
       main.addEventListener('click', function() {
         drawer.classList.remove('open');
       });
-
     </script>
 </html>
