@@ -56,6 +56,12 @@ function ViewModel() {
         }
     ]);
     this.hideAll=function(){
+      if(bounce){
+        toggleBounce(bounce);
+        self.infowindow.marker=null;
+        self.infowindow.close();
+      }
+
       for (var i=0;i<Object.keys(self.markers()).length; i++)
         self.markers()[i].setMap(null);
       for (i=0; i<gmarkers.length;i++)
@@ -64,11 +70,11 @@ function ViewModel() {
     };
 
     this.showAll=function(){
-      for (var i=0;i<Object.keys(self.markers()).length; i++)
-        self.markers()[i].setMap(self.map);
       for (i=0; i<gmarkers.length;i++)
         gmarkers[i].setMap(null);
-      gmarkers=[];
+      gmarkers=[];      
+      for (var i=0;i<Object.keys(self.markers()).length; i++)
+        self.markers()[i].setMap(self.map);
     };
 
     this.searchQuery=ko.observable();
@@ -150,7 +156,6 @@ function ViewModel() {
       for (var i=0;i<Object.keys(self.markers()).length; i++){
         if(self.markers()[i].title!==place.name){
           self.markers()[i].setMap(null);
-          //console.log(self.markers()[i]['title']);
         }
         else{
           self.markers()[i].setMap(self.map);
@@ -158,7 +163,6 @@ function ViewModel() {
           renderComments(self.markers()[i].position,self.markers()[i].title);
           popInfowindow(self.markers()[i], self.infowindow);
         }
-        //console.log(self.markers()[i].getMap())
       }
     };
     var bounce=null;
@@ -166,11 +170,12 @@ function ViewModel() {
       if (bounce!==marker&&bounce!==null){
         bounce.setAnimation(null);
       }
-      bounce=marker;
       if (marker.getAnimation()!==null){
         marker.setAnimation(null);
+        bounce=null;
       }else{
         marker.setAnimation(google.maps.Animation.BOUNCE);
+        bounce=marker;
       }
     }
 
@@ -188,7 +193,6 @@ function ViewModel() {
 
           var gbound = new google.maps.LatLngBounds();
           gbound.extend({lat: latlng.lat(), lng: latlng.lng()});
-
           for(var i=0;i<gmarkers.length;i++){
             gmarkers[i].setMap(null);
           }
@@ -198,7 +202,6 @@ function ViewModel() {
 
           while(i<3 && j<20){
             j++;
-            //self.gasArray.push(response.businesses[i]);
             var markerlatlng = {lat: response.businesses[j].coordinates.latitude, 
                                 lng: response.businesses[j].coordinates.longitude};
             console.log(response.businesses[j]);
@@ -226,8 +229,9 @@ function ViewModel() {
             infowindow = new google.maps.InfoWindow();
             self.addgMarker(self.marker);
           }
-          self.map.fitBounds(gbound);
-          //self.boundSet(gbound);
+          self.boundSet(gbound);
+          self.map.setCenter(latlng);
+
 
       }}).error(function(){
         alert("Cannot load Yelp API to retreive the gas stations info.");
@@ -241,7 +245,7 @@ function ViewModel() {
     };
 
     function popInfowindowg(marker, infowindow){
-            if (infowindow.marker != marker) {
+            if (infowindow.marker !== marker) {
               infowindow.marker = marker;
               var content='<strong>' + marker.title+'</strong>';
               for (var i=0;i<marker.type.length;i++){
@@ -251,9 +255,8 @@ function ViewModel() {
 
               infowindow.open(self.map, marker);
               // Make sure the marker property is cleared if the infowindow is closed.
-              infowindow.addListener('closeclick', function() {
-                infowindow.marker = null;
-                //infowindow.marker.setMap(null);
+             google.maps.event.addListenerOnce(infowindow, 'closeclick', function(event) {
+                infowindow.marker=null;
               }); 
 
             }
@@ -264,9 +267,9 @@ function ViewModel() {
           infowindow.setContent('<strong width="100px">' + marker.title + '</strong>'+'<div width="100px">'+ marker.type+'</div>');
           infowindow.open(map, marker);
           // Make sure the marker property is cleared if the infowindow is closed.
-          infowindow.addListener('closeclick', function() {
-            infowindow.marker = null;
-            //self.gasArray=ko.observableArray(null);
+          google.maps.event.addListenerOnce(infowindow, 'closeclick', function(event) {
+            infowindow.marker=null;
+            toggleBounce(marker);
           }); 
 
         }
@@ -307,9 +310,10 @@ function ViewModel() {
       };
     this.boundSet= function(bound){
         self.map.fitBounds(bound);
+        console.log(self.map.getZoom());
         google.maps.event.addListenerOnce(self.map, 'bounds_changed', function(event){
-            if (this.getZoom() > 15) {
-                this.setZoom(14);
+            if (self.map.getZoom() > 13) {
+                self.map.setZoom(13);
             }
         });
     };
@@ -326,8 +330,11 @@ function ViewModel() {
         address = address.split(' ').join('+');
         var locationurl="https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg";
         var addNewlocation=$.getJSON(locationurl, function(data){
+            if(data.result==null){
+              alert("Cannot find the place. please write it precisely!")
+              return 0;
+            }
             var latlng=data.results[0].geometry.location;
-
             var place={
                 name : self.name(),
                 type : self.type(),
@@ -337,7 +344,6 @@ function ViewModel() {
               };
             self.placeArray.push(place);
 
-            //console.log(self.place);
             self.initMap();
         }).error(function(){self.mapError();});
     };
