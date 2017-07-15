@@ -77,20 +77,23 @@ function ViewModel() {
       for (var i=0;i<Object.keys(self.markers()).length; i++){
         self.markers()[i].setMap(self.map);
         self.bound.extend(self.markers()[i].position);
+        self.boundSet(self.bound);
       }
     };
 
     this.searchQuery=ko.observable();
     this.placeArrayResult=ko.computed(function(){
       this.ret=ko.observableArray([]);
+      var placeTitle;
       self.showAll();
       if(!self.searchQuery())
         return self.placeArray();
       self.hideAll();
       for(var i=0;i<Object.keys(self.placeArray()).length;i++){
-        if(self.placeArray()[i].name.startsWith(self.searchQuery())){
+        placeTitle=self.placeArray()[i].name.toLowerCase();
+        if(placeTitle.startsWith(self.searchQuery().toLowerCase())){
           for(i=0;i<Object.keys(self.markers()).length;i++){
-            if(self.markers()[i].title.startsWith(self.searchQuery())){
+            if(self.markers()[i].title.toLowerCase().startsWith(self.searchQuery().toLowerCase())){
               self.markers()[i].setMap(self.map);
               ret.push(self.placeArray()[i]);
             }
@@ -158,7 +161,7 @@ function ViewModel() {
         else{
           self.markers()[i].setMap(self.map);
           toggleBounce(self.markers()[i]);
-          if(gmarkers.length===0||self.showname()===place.name){
+          if(gmarkers.length===0||self.markers()[i].title===place.name){
             renderComments(self.markers()[i].position,self.markers()[i].title);
           }
           popInfowindow(self.markers()[i], self.infowindow);
@@ -210,7 +213,7 @@ function ViewModel() {
               name : response.businesses[j].name,
               address0 : response.businesses[j].location.display_address[0],
               address1 : response.businesses[j].location.display_address[1]
-            })
+            });
 
             /*
             $('#gas_title'+i).replaceWith('<div id="gas_title'+ i +'"><strong>'+response.businesses[j].name+'</strong><h5>'+response.businesses[j].location.display_address[0]+'<br>'+response.businesses[j].location.display_address[1]+'</h5></div>');
@@ -240,9 +243,7 @@ function ViewModel() {
           }
           self.boundSet(self.bound);
           self.map.setCenter(latlng);
-
-
-      }}).fail(function(){
+        }}).fail(function(){
         alert("Cannot load Yelp API to retreive the gas stations info.");
       });
     }
@@ -340,22 +341,28 @@ function ViewModel() {
         address = address.split(' ').join('+');
         var locationurl="https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg";
         var addNewlocation=$.getJSON(locationurl, function(data){
-            if(data.results==null){
-              alert("Cannot find the place. please write it precisely!")
+          if(data.results.length===0){
+            alert("Cannot find the place. please write it precisely!");
+            return 0;
+          }
+          var feedback;
+          console.log(data.results[0].partial_match);
+          if(data.results[0].partial_match===true){
+            feedback=confirm("The address found is:\n"+ data.results[0].formatted_address+"\n Are you sure about it? Click Cancel to change.");
+            if(feedback===false)
               return 0;
-            }
-            var latlng=data.results[0].geometry.location;
-            var place={
+          }
+          var latlng=data.results[0].geometry.location;
+          var place={
                 name : self.name(),
                 type : self.type(),
                 location : self.fulladdr(),
                 latlng: latlng,
                 remember : self.remember()
               };
-            self.placeArray.push(place);
-
-            self.initMap();
-        }).error(function(){self.mapError();});
+          self.placeArray.push(place);
+          self.initMap();
+        }).fail(function(){self.mapError();});
     };
     this.mapError=function() {
           //var e=textStatus + ", " + error;
@@ -367,7 +374,7 @@ function ViewModel() {
        * Open the drawer when the menu ison is clicked.
        */
 var menu = document.querySelector('#menu');
-var main = document.querySelector('main');
+var main = document.querySelector('.main');
 var drawer = document.querySelector('.nav');
 menu.addEventListener('click', function(e) {
   drawer.classList.toggle('open');
@@ -376,7 +383,17 @@ menu.addEventListener('click', function(e) {
 
 main.addEventListener('click', function() {
   drawer.classList.remove('open');
-});      
+});
+
+var config = {
+  apiKey: "AIzaSyDWPUcOwALBoUG-j_5vR-Qifd21IVXiZSs",
+  authDomain: "alans-gas-station.firebaseapp.com",
+  databaseURL: "https://alans-gas-station.firebaseio.com",
+  projectId: "alans-gas-station",
+  storageBucket: "",
+  messagingSenderId: "1062835632013"
+};
+firebase.initializeApp(config);            // Initialize Firebase
 
 var vm = new ViewModel();
 ko.applyBindings(vm);

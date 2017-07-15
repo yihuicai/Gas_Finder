@@ -8,7 +8,8 @@ ul {
 
 .gas_img {
   width: 100%;
-  height: 20vw;
+  max-width: 300px;
+  max-height: 30vw; 
   margin: 10px;
   border-radius: 10px;
 }
@@ -22,7 +23,6 @@ ul {
   height: 80px;
   width: auto;
   margin: 0 10px 5px 0;
-  border: solid 1px #98afc7;
   border-radius: 10px;
 }
 
@@ -34,10 +34,6 @@ header {
   margin: auto 10px;
 }
 
-main {
-  margin-top: 10px;
-}
-
 .header__menu {
   display: none;
 }
@@ -47,7 +43,6 @@ main {
 }
 
 .w {
-  background-color: #fffff0;
   padding: 10px;
   margin: 0;       
 }
@@ -151,8 +146,11 @@ p {
   }
 
   #info {
-    width: 28%;
+    width: 25%;
     max-width: 280px;
+    padding: 10px;
+    margin: 5px;
+    border: solid 2px #dcdcdc;
   }
 
   .nav {
@@ -163,24 +161,26 @@ p {
 @media screen and (max-width: 650px) {
 
   .gas_img {
-    height: 40vw;    
     width: 60%;
+    max-height: 40vw; 
   }
 
   .w {
     width: 100%;
-    color:#696969;
+    color: #696969;
+    background-color: #fffff0;
+    margin-bottom: 10px;
   }
 
   #info {
     position: absolute;
-    width: 90%;
-    margin: auto;
+    padding: 10px;
+    width: 50%;
+    min-width: 250px;
     top: 60vmax;
-    right: 20px;
     z-index: 10; 
     background-color: white;
-    border: solid 1px grey;
+    border: solid 2px #dcdcdc;
   }
 
   #map_wrapper {

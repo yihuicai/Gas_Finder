@@ -28,7 +28,7 @@
 		    </ul>
 		</nav>
         </div>
-  		<main class="container-fluid">
+  		<div class="main container">
             <div class="row">
                 <div class="col-sm-3 col-xs-4 noshow" id="info">
                     <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -41,7 +41,7 @@
                     <button class="btn btn-default showall" data-bind="click: hideAll">Hide All</button>
                     <br>
                     <br>
-                    <strong>Places</strong>
+                    <label>Places</label>
                     <div class="col-xs-11 text-center" data-bind="foreach: placeArrayResult">
                         <ul  class="list-group">
                             <li class="list-group-item"><a href="#" data-bind="text : name, click: $parent.viewPlace"></a></li>
@@ -51,17 +51,6 @@
                 </div>
                 <div class="col-xs-12" id="map_wrapper" >
                     <div id="map"></div>
-                    <h4 class="text-center">The Three Gas Stations Near</h4>
-                    <h3 id="city" class="text-center" data-bind="text : showname"></h3>
-                    <div class="row thumbnail" data-bind="foreach : show_gas">
-                        <div class="col-xs-4 text-center w">  
-                            <p data-bind="text : distance"></p>
-                            <img data-bind="attr : {src : img}" class="gas_img" alt="Image of one of the gas stations">                     
-                            <p data-bind="text : name">Select a marker in the map</p>
-                            <p data-bind="text : address0"></p>
-                            <p data-bind="text : address1"></p>
-                        </div>
-                    </div>
                 </div>
                 <form class="col-xs-3 noshow" id="getaddr">
                     <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -96,6 +85,19 @@
                     <a id="submit" class="btn btn-default" data-bind="css: valid, click: load">Submit</a>
                 </form> 
             </div>
+            <div class="container">
+                <h4 class="text-center row">The Three Gas Stations Near</h4>
+                <h3 id="city" class="text-center row" data-bind="text : showname"></h3>
+                <div class="row thumbnail" data-bind="foreach : show_gas">
+                    <div class="col-xs-4 text-center w">  
+                        <p data-bind="text : distance"></p>
+                        <img data-bind="attr : {src : img}" class="gas_img" alt="Image of one of the gas stations">                     
+                        <p data-bind="text : name"></p>
+                        <p data-bind="text : address0"></p>
+                        <p data-bind="text : address1"></p>
+                    </div>
+                </div>
+            </div>
   	  		<div class="row">
                 <p class="col-xs-12 powerby">Power BY</p>
                 <div class="text-center">
@@ -103,19 +105,8 @@
                     <img src="http://www.adweek.com/wp-content/uploads/sites/2/2015/11/Google-Maps.png" class="copyright" alt="google maps api">
                 </div>
   	  		</div>
-  	    </main>
+  	    </div>
         <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
-        <script>
-            var config = {
-                apiKey: "AIzaSyDWPUcOwALBoUG-j_5vR-Qifd21IVXiZSs",
-                authDomain: "alans-gas-station.firebaseapp.com",
-                databaseURL: "https://alans-gas-station.firebaseio.com",
-                projectId: "alans-gas-station",
-                storageBucket: "",
-                messagingSenderId: "1062835632013"
-            };
-            firebase.initializeApp(config);            // Initialize Firebase
-        </script>
         <script src="js/jquery-3.2.1.min.js"></script>
         <script src="js/knockout-3.4.2.js"></script>
         <script src="js/main.js"></script>
