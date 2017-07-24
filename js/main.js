@@ -91,7 +91,9 @@ function ViewModel() {
       self.hideAll();
       for(var i=0;i<Object.keys(self.placeArray()).length;i++){
         placeTitle=self.placeArray()[i].name.toLowerCase();
+        //match the query to placeArray first(the query is substring of placeArray)
         if(placeTitle.startsWith(self.searchQuery().toLowerCase())){
+          //Then loop over marker and see if there is a match with marker(the query is the first few letters of a marker's title )
           for(i=0;i<Object.keys(self.markers()).length;i++){
             if(self.markers()[i].title.toLowerCase().startsWith(self.searchQuery().toLowerCase())){
               self.markers()[i].setMap(self.map);

@@ -1,16 +1,24 @@
-+--------------------------------------------------------------------------------------------------------+
-|                                        Project 6: Neighborhood Map                                     |
-+--------------------------------------------------------------------------------------------------------+
+## Local Gas Station Map
 
-0. Introduction:
-   This is a simple front end web application that uses Google Maps API and Yelp V3 API to retreive gas stations around certain neighborhood. The JavaScript file uses JQuery and Knockout.JS to call function, bind data and run AJAX requests.
+#### Summary:
 
-1. How to run:
-    a. Just simply open the index.html. Be sure to have your internet on, or you are gonna see errors.
+- This is a simple front end web application that uses Google Maps API and Yelp Fusion API to retreive gas stations around a certain neighborhood. It has some default locations set by me. You can add your own locations and search automatically the gas stations around.  :blush:
+- The `main.js` uses `JQuery` and `Knockout.JS` to call functions, bind data and run AJAX requests.
+- See demo [here](https://d3dek89duzor21.cloudfront.net/).
 
-    b. Click the mark on the map to see 3 nearest gas stations found by Yelp. They are marked by green color and the detailed information is shown below the map.
+![Demo](https://s3-us-west-1.amazonaws.com/portfolioalan/demo2.PNG)
 
-    c. Note that sometimes not all the gas stations are shown in the map just because Yelp doesn't have Latitude and Longitude info for all the entries.
+------
 
-    d. You can add places and let them be shown in the map.
-    e. Permanent storage feature is to be developed.
+#### For Developers:
+
+- Clone and pull this repository to your own computer.
+- Just simply open the index.html. Be sure to have access to internet.
+- Click the mark on the map to see 3 nearest gas stations found by Yelp. They are marked by green color and the detailed information is shown below the map.
+- Note that sometimes not all the gas stations are shown in the map just because Yelp doesn't have Latitude and Longitude info for all the entries.
+- You can add places and let them be shown in the map.
+
+#### To be completed: :fearful:
+
+- [ ] **About Author:** To render an interactive block to tell users about the author.
+- [ ] **Save Places:** To save added places to firebase so that even after closing the browser, the newly added places can be restored.
