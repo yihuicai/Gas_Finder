@@ -133,16 +133,13 @@ p {
     width: 45%;
   }
 
-  .big {
-      box-sizing: border-box;
-      border-bottom: solid 2px #dcdcdc;
-  }
-
   .nav__item {
       padding: 24px 0;
   }
 
   .big {
+      box-sizing: border-box;
+      border-bottom: solid 2px #dcdcdc;    
       display: flex;
       flex-wrap: wrap;
       display: -webkit-flex;
@@ -167,7 +164,7 @@ p {
   }
 
   .nav {
-      width: 100%;
+      width: 60%;
   }
 }
 
@@ -214,8 +211,7 @@ p {
   }
   
   .nav {
-    border-bottom: solid 1px grey;
-    border-right: solid 2px grey;
+
     z-index: 10;
     background-color: #fff;
     width: 150px;

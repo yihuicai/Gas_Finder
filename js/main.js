@@ -22,7 +22,7 @@ function ViewModel() {
     this.zipcode= ko.observable();
     this.remember= ko.observable(false);
     this.fulladdr= ko.computed(function() {
-        return this.street()+"+"+this.city()+"+"+this.state()+"+"+this.zipcode();
+        return this.street()+this.city()+this.state()+this.zipcode();
     }, this);
     this.valid= ko.pureComputed(function() {
         return this.name()&&this.type()&&this.street() ?  undefined : 'disabled';
@@ -204,7 +204,10 @@ function ViewModel() {
           gmarkers.length=0;
           i=0;
           var j=0;
-
+          if(response.businesses.length===0){
+            alert("No local gas stations.:( Ask Yelp to update the data");
+            return 0;
+          }
           while(i<3 && j<20){
             j++;
             var markerlatlng = {lat: response.businesses[j].coordinates.latitude, 
@@ -340,7 +343,12 @@ function ViewModel() {
     
     this.load = function loadData(fulladdr) {
         var address = self.fulladdr();
+        address = address.split('undefined').join('')
+        console.log(address)
         address = address.split(' ').join('+');
+
+        console.log(address);
+
         var locationurl="https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg";
         var addNewlocation=$.getJSON(locationurl, function(data){
           if(data.results.length===0){
@@ -348,7 +356,7 @@ function ViewModel() {
             return 0;
           }
           var feedback;
-          console.log(data.results[0].partial_match);
+          //console.log(data.results[0].partial_match);
           if(data.results[0].partial_match===true){
             feedback=confirm("The address found is:\n"+ data.results[0].formatted_address+"\n Are you sure about it? Click Cancel to change.");
             if(feedback===false)
