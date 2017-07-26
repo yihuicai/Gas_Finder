@@ -22,7 +22,7 @@ function ViewModel() {
     this.zipcode= ko.observable();
     this.remember= ko.observable(false);
     this.fulladdr= ko.computed(function() {
-        return this.street()+this.city()+this.state()+this.zipcode();
+        return this.street()+' '+this.city()+' '+this.state()+' '+this.zipcode();
     }, this);
     this.valid= ko.pureComputed(function() {
         return this.name()&&this.type()&&this.street() ?  undefined : 'disabled';
@@ -208,10 +208,13 @@ function ViewModel() {
             alert("No local gas stations.:( Ask Yelp to update the data");
             return 0;
           }
-          while(i<3 && j<20){
-            j++;
-            var markerlatlng = {lat: response.businesses[j].coordinates.latitude, 
-                                lng: response.businesses[j].coordinates.longitude};
+          while(i<3 && j<20 && response.businesses[j]!==undefined){
+
+            var gaslatlng=response.businesses[j].coordinates;
+            var markerlatlng = {lat: gaslatlng.latitude, 
+                                lng: gaslatlng.longitude};
+            console.log(response.businesses[j]);
+            // render the gas station info below the map
             self.show_gas.push({
               distance : response.businesses[j].distance.toFixed(0) + " meters away",
               img : response.businesses[j].image_url,
@@ -219,17 +222,21 @@ function ViewModel() {
               address0 : response.businesses[j].location.display_address[0],
               address1 : response.businesses[j].location.display_address[1]
             });
-
-            /*
+            /* The old jQuery methond of rendering gas station information below the map
             $('#gas_title'+i).replaceWith('<div id="gas_title'+ i +'"><strong>'+response.businesses[j].name+'</strong><h5>'+response.businesses[j].location.display_address[0]+'<br>'+response.businesses[j].location.display_address[1]+'</h5></div>');
             $('#gas_img'+i).replaceWith('<img width="100%" id="gas_img'+ i +'" src="'+response.businesses[j].image_url+'" width="200px" meters away</img>');
             $('#gas_distance'+i).replaceWith('<p id="gas_distance'+ i +'">'+response.businesses[j].distance.toFixed(0)+' meters away</p>');
             */
             i++;
-            if (!(markerlatlng.lat&&markerlatlng.lng))
-                continue;  
+            // If the latlng location is not available, skip the marker setup
+            if (!(markerlatlng.lat&&markerlatlng.lng)){
+                j++;//continue to next business
+                continue;
+              }
+            // set the marker infowindow.
             var title = response.businesses[j].name;
             var type = response.businesses[j].categories;
+            j++;
               //create and push the marker
             self.marker = new google.maps.Marker({
                   position: markerlatlng,
@@ -326,8 +333,8 @@ function ViewModel() {
     this.boundSet= function(bound){
         self.map.fitBounds(bound);
         google.maps.event.addListenerOnce(self.map, 'bounds_changed', function(event){
-            if (self.map.getZoom() > 13) {
-                self.map.setZoom(13);
+            if (self.map.getZoom() > 12) {
+                self.map.setZoom(12);
             }
         });
     };
@@ -343,10 +350,10 @@ function ViewModel() {
     
     this.load = function loadData(fulladdr) {
         var address = self.fulladdr();
-        address = address.split('undefined').join('')
-        console.log(address)
+        while(address.search(' undefined')!=-1){
+          address = address.replace(' undefined','');
+        }
         address = address.split(' ').join('+');
-
         console.log(address);
 
         var locationurl="https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg";
