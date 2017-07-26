@@ -143,7 +143,10 @@ p {
   }
 
   .big {
-      display: inline-flex;
+      display: flex;
+      flex-wrap: wrap;
+      display: -webkit-flex;
+      -webkit-flex-wrap: wrap;
       width: 100%;
   }
 
