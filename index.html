@@ -8,17 +8,17 @@
         <title>Alan's Gas Finder</title>
     </head>
     <body>
-        <div class="big">
-        <header class="header">
-            <a id="menu" class="header__menu col-xs-1">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">    
-            		<path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
-          	    </svg>
-          	</a>  
-            <div class="header__inner">
-                <h3 class="header__title">Alan's Map</h3>
-        	</div>
-        </header>
+        <div class="big_header">
+            <header class="header">
+                <a id="menu" class="header__menu col-xs-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">    
+            		  <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
+          	        </svg>
+          	    </a>  
+                <div class="header__inner">
+                    <h3 class="header__title">Alan's Map</h3>
+        	    </div>
+            </header>
 	    <nav id="drawer" class="nav"> 
 		    <ul class="nav__list">
 		        <li class="nav__item"><button class="btn btn-primary" id="add">Add places</button></li>
@@ -28,28 +28,26 @@
 		    </ul>
 		</nav>
         </div>
-  		<div class="main container">
+  		<div class="main container-fluid">
             <div class="row">
-                <div class="col-xs-3 noshow" id="info">
+                <div class="col-xs-3" id="info">
                     <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <br>
                     <div class="form-group">
-                        <label>Filter</label>
                         <input type="search" class="form-control" data-bind="textInput: searchQuery" placeholder="Enter your place">
                     </div>
                     <button class="btn btn-default showall" data-bind="click: showAll">Show All</button>
                     <button class="btn btn-default showall" data-bind="click: hideAll">Hide All</button>
                     <br>
                     <br>
-                    <label>Places</label>
-                    <div class="col-xs-11 text-center" data-bind="foreach: placeArrayResult">
-                        <ul  class="list-group">
+                    <div class="text-center" data-bind="foreach: placeArrayResult">
+                        <ul class="list-group">
                             <li class="list-group-item"><a href="#" data-bind="text : name, click: $parent.viewPlace"></a></li>
-                            <li data-bind="text : type" class="list-group-item"></li>
+                            <li class="list-group-item" data-bind="text : type" class="list-group-item"></li>
                         </ul>
                     </div>
                 </div>
-                <div class="col-xs-12" id="map_wrapper" >
+                <div class="col-xs-12 col-xs-9" id="map_wrapper" >
                     <div id="map"></div>
                 </div>
                 <form class="col-xs-3 noshow" id="getaddr">
@@ -91,7 +89,7 @@
                 <div class="row thumbnail" data-bind="foreach : show_gas">
                     <div class="col-xs-4 text-center w">  
                         <p data-bind="text : distance"></p>
-                        <img data-bind="attr : {src : img}" class="gas_img" alt="Image of one of the gas stations">                     
+                        <div data-bind="style : { 'background-image' : img}" class="gas_img" alt="Image of one of the gas stations"></div>
                         <p data-bind="text : name"></p>
                         <p data-bind="text : address0"></p>
                         <p data-bind="text : address1"></p>
@@ -99,7 +97,7 @@
                 </div>
             </div>
   	  		<div class="row powerByBox">
-                <p class="col-xs-12 powerby">Power BY</p>
+                <p class="col-xs-12 powerby">Powered BY</p>
                 <div class="text-center">
                     <img src="http://cdn.ttgtmedia.com/ITKE/uploads/blogs.dir/317/files/2016/09/1yelpoewifiuwgf.jpg" class="copyright" alt="yelp fusion api">
                     <img src="http://www.adweek.com/wp-content/uploads/sites/2/2015/11/Google-Maps.png" class="copyright" alt="google maps api">

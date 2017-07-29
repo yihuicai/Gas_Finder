@@ -1,4 +1,6 @@
-## Local Gas Station Map
+# Local Gas Station Map
+
+**New Feature (2017.07.29)**: Scroll bar added to prevent overflow. Modified the navigation bar. Add place filter to default display.
 
 #### Summary:
 

@@ -107,7 +107,7 @@ function ViewModel() {
 
     var infowindow;
     this.f_new_place=ko.observable(false);
-    this.f_findPlace=ko.observable(false);
+    this.f_findPlace=ko.observable(true);
     this.f_big_map=ko.pureComputed(function(){
         return !(this.f_new_place()||this.f_findPlace());
     }, this);
@@ -217,7 +217,7 @@ function ViewModel() {
             // render the gas station info below the map
             self.show_gas.push({
               distance : response.businesses[j].distance.toFixed(0) + " meters away",
-              img : response.businesses[j].image_url,
+              img : "url('" + response.businesses[j].image_url + "')",
               name : response.businesses[j].name,
               address0 : response.businesses[j].location.display_address[0],
               address1 : response.businesses[j].location.display_address[1]
