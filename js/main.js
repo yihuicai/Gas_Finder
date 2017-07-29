@@ -57,6 +57,16 @@ function ViewModel() {
          remember : false
         }
     ]);
+
+    /*
+    Set the searchQuery first because when the placeArrayResult
+    found it was cleared, it will showAll() again.
+    */
+    this.hideall=function(){
+      self.searchQuery(null);
+      self.hideAll();
+    };
+
     this.hideAll=function(){
       //let the bouncing markers stop
       if(bounce){
@@ -68,8 +78,13 @@ function ViewModel() {
         self.markers()[i].setMap(null);
       for (i=0; i<gmarkers.length;i++)
         gmarkers[i].setMap(null);
-      //clear all gas markers
+      //clear all gas markers, this is the best way to clear an array
       gmarkers.length=0;
+    };
+
+    this.showall=function(){
+      self.searchQuery(null);
+      self.showAll();
     };
 
     this.showAll=function(){
