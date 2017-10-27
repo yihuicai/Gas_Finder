@@ -102,8 +102,6 @@ p {
 }
 
 #getaddr {
-    overflow: scroll;
-    height: 60vmin;
     padding: 10px;
     margin: auto;
     border: solid 2px #dcdcdc;
@@ -157,6 +155,10 @@ p {
 
   header {
       width: 33%;
+  }
+  #getaddr {
+	  height: 60vmin;
+	  overflow: scroll;
   }
 
   #info {

@@ -4,6 +4,7 @@ function ViewModel() {
     this.name=ko.observable();
     this.map=ko.observable();
     this.marker=ko.observable();
+    this.changed = ko.observable(false);
     this.markers = ko.observableArray([]);
     this.type=ko.observable();
     this.remain=function(){alert("This part is not finished, sorry :(");};
@@ -29,35 +30,9 @@ function ViewModel() {
     },this);
     var bound;
     var gmarkers=[];
-    this.placeArray=ko.observableArray([
-        {latlng : { lat: 37.8718897, lng: -122.2632496 },
-         location : "University+of+California,+Berkeley+Berkeley,+CA+94720",
-         type : "Others",
-         name : "UC Berkeley",
-         remember : false},
-        {latlng : { lat: 37.4219999, lng: -122.0862462 },
-         location : "1600 Amphitheatre Pkwy+Mountain View+California+94043",
-         type : "Company",
-         name : "Google",
-         remember : false},
-        {latlng : { lat: 37.3746291, lng: -121.894227 },
-         location : "15350 Penitencia Creek Rd+San+Jose+California+95127",
-         type : "Park",
-         name : "Alum Rock Park",
-         remember : false},
-        {latlng : { lat: 37.4158559, lng: -121.8975733 },
-         location : "447 Great Mall Dr+Milpitas+California+95035",
-         type : "Others",
-         name : "Shihlin Taiwan Street Snacks",
-         remember : false},
-        {latlng : { lat: 37.4176568 , lng: -121.9016895 } ,
-         location : "62 Sun Song+Milpitas+California+95035",
-         type : "Home",
-         name : "Alan's Home",
-         remember : false
-        }
-    ]);
 
+    this.DATA=[]
+    this.placeArray=ko.observableArray([]);
     /*
     Set the searchQuery first because when the placeArrayResult
     found it was cleared, it will showAll() again.
@@ -169,7 +144,21 @@ function ViewModel() {
          }
          self.initMap();
     });
-    
+    this.DeletePlace = function(place){
+      for (var i = 0; i < self.placeArray().length; i++){
+        if (self.placeArray()[i].name === place.name){
+          self.placeArray.splice(i, 1);
+          self.changed = ko.observable(true);
+        }
+      }
+      for (var i=0;i<self.markers().length; i++){
+        if(self.markers()[i].title === place.name){
+          self.markers()[i].setMap(null);
+          self.markers.splice(i, 1);
+        }
+      }
+
+    }
     this.viewPlace=function(place){
       for (var i=0;i<Object.keys(self.markers()).length; i++){
         if(self.markers()[i].title!==place.name){
@@ -314,13 +303,19 @@ function ViewModel() {
 
     this.initMap= function initMap(){
         // Constructor creates a new map
-        this.map = new google.maps.Map(document.getElementById('map'), {
-          center: self.placeArray()[0].latlng,
-          zoom: 14
-        });    
-        self.Mapset();
+        var fb = firebase.database().ref("/alans-gas-station");
+        fb.on('value', function(snapshot) {
+          self.DATA = snapshot.val();
+          self.placeArray = ko.observableArray(self.DATA);
+          self.Mapset();
+      });
+        
     };
     this.Mapset = function (){
+      self.map = new google.maps.Map(document.getElementById('map'), {
+          center: self.placeArray()[0].latlng,
+          zoom: 14
+        }); 
       self.bound = new google.maps.LatLngBounds();
       self.markers.removeAll();
                 //loop over placeArray and set markers
@@ -393,7 +388,13 @@ function ViewModel() {
                 remember : self.remember()
               };
           self.placeArray.push(place);
-          self.initMap();
+          self.changed =  ko.observable(true);
+          if (place.remember){
+            self.DATA.push(place);
+            firebase.database().ref("/alans-gas-station").set(self.DATA);
+            self.changed = ko.observable(false);
+          }
+          self.Mapset();
         }).fail(function(){self.mapError();});
     };
     this.mapError=function() {
@@ -401,6 +402,19 @@ function ViewModel() {
           alert("Cannot load Google Map!");
           $("#map").text("Google Maps cannot be loaded.");
         };
+
+    this.updateAddress = function() {
+      if (!self.changed()){
+        alert("You have not added any markers.");
+        return;
+      }
+      else {
+        alert("You have "+self.placeArray().length +" places now!");
+        self.changed = ko.observable(false);
+        self.DATA = self.placeArray();
+        console.log(self.DATA);
+        return firebase.database().ref("/alans-gas-station").set(self.DATA)};
+      }
 }
 
 var vm = new ViewModel();
@@ -422,14 +436,15 @@ main.addEventListener('click', function() {
 });
 
 var config = {
-  apiKey: "AIzaSyDWPUcOwALBoUG-j_5vR-Qifd21IVXiZSs",
-  authDomain: "alans-gas-station.firebaseapp.com",
-  databaseURL: "https://alans-gas-station.firebaseio.com",
-  projectId: "alans-gas-station",
-  storageBucket: "",
-  messagingSenderId: "1062835632013"
-};
+    apiKey: "AIzaSyDWPUcOwALBoUG-j_5vR-Qifd21IVXiZSs",
+    authDomain: "alans-gas-station.firebaseapp.com",
+    databaseURL: "https://alans-gas-station.firebaseio.com",
+    projectId: "alans-gas-station",
+    storageBucket: "alans-gas-station.appspot.com",
+    messagingSenderId: "1062835632013"
+  };
 firebase.initializeApp(config);            // Initialize Firebase
+var database = firebase.database()
 
 
     

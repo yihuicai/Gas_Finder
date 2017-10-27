@@ -1,5 +1,7 @@
 # Local Gas Station Map
 
+**New Feature (2017.10.27)**: "Save Place" implemented! You can add new places of your own now. Besides, It utilizes **real-time database** so that you can also see what other people have added to the map!
+
 **New Feature (2017.07.29)**: Scroll bar added to prevent overflow. Modified the navigation bar. Add place filter to default display.
 
 #### Summary:
@@ -23,4 +25,4 @@
 #### To be completed: :fearful:
 
 - [ ] **About Author:** To render an interactive block to tell users about the author.
-- [ ] **Save Places:** To save added places to firebase so that even after closing the browser, the newly added places can be restored.
+- [x] ~~**Save Places:** To save added places to firebase so that even after closing the browser, the newly added places can be restored.~~
