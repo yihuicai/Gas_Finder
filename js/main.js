@@ -168,7 +168,7 @@ function ViewModel() {
           self.markers()[i].setMap(self.map);
           toggleBounce(self.markers()[i]);
           if(gmarkers.length===0||self.markers()[i].title===place.name){
-            renderComments(self.markers()[i].position,self.markers()[i].title);
+            renderMarkers(self.markers()[i].position,self.markers()[i].title);
           }
           popInfowindow(self.markers()[i], self.infowindow);
         }
@@ -187,7 +187,7 @@ function ViewModel() {
         bounce=marker;
       }
     }
-    function renderComments(latlng,Locname){
+    function renderMarkers(latlng,Locname){
       $.ajax({
         crossDomain : true,
         dataType : 'json',
@@ -318,12 +318,35 @@ function ViewModel() {
         }); 
       self.bound = new google.maps.LatLngBounds();
       self.markers.removeAll();
-                //loop over placeArray and set markers
+      if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+
+            self.marker = new google.maps.Marker({
+              position: pos,
+              map: self.map,
+              title: "You are Here",
+              type: "Others",
+              icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+              animation: google.maps.Animation.DROP
+              });
+            self.markers.push(self.marker);
+            self.infowindow = new google.maps.InfoWindow()
+            self.addMarker(self.marker);
+            renderMarkers(self.marker.position, self.marker.title);
+          }, function() {
+            alert("Cannot locate your place!");
+          });
+      }
+      //loop over placeArray and set markers
       for(var i=0; i<Object.keys(self.placeArray()).length;i++){
         var markerlatlng = self.placeArray()[i].latlng;
         var title = self.placeArray()[i].name;
         var type = self.placeArray()[i].type;
-            //create and push the marker
+        //create and push the marker
         self.marker = new google.maps.Marker({
           position: markerlatlng,
           map: self.map,
@@ -338,6 +361,7 @@ function ViewModel() {
         self.infowindow = new google.maps.InfoWindow();
         self.addMarker(self.marker);
       }
+
         self.boundSet(self.bound);
     };
     this.boundSet= function(bound){
@@ -352,7 +376,7 @@ function ViewModel() {
       marker.addListener("click", function(){
         toggleBounce(marker);
         if(gmarkers.length===0||self.showname()!==marker.title){
-          renderComments(marker.position, marker.title);
+          renderMarkers(marker.position, marker.title);
         }
         popInfowindow(marker, self.infowindow);
       });
