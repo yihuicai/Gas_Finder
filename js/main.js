@@ -142,17 +142,20 @@ function ViewModel() {
             }
             $("#map_wrapper").addClass(add);
          }
-         self.initMap();
+         self.Mapset();
     });
     this.DeletePlace = function(place){
       for (var i = 0; i < self.placeArray().length; i++){
-        if (self.placeArray()[i].name === place.name){
+        if (self.placeArray()[i].latlng.lat === place.latlng.lat){
           self.placeArray.splice(i, 1);
           self.changed = ko.observable(true);
+          break
         }
       }
       for (var i=0;i<self.markers().length; i++){
-        if(self.markers()[i].title === place.name){
+        //console.log(self.markers()[i]);
+        if(self.markers()[i].position.lat() === place.latlng.lat){
+          //console.log(place.latlng);
           self.markers()[i].setMap(null);
           self.markers.splice(i, 1);
         }
@@ -161,15 +164,13 @@ function ViewModel() {
     }
     this.viewPlace=function(place){
       for (var i=0;i<Object.keys(self.markers()).length; i++){
-        if(self.markers()[i].title!==place.name){
+        if(self.markers()[i].position.lat()!==place.latlng.lat){
           self.markers()[i].setMap(null);
         }
         else{
           self.markers()[i].setMap(self.map);
           toggleBounce(self.markers()[i]);
-          if(gmarkers.length===0||self.markers()[i].title===place.name){
-            renderMarkers(self.markers()[i].position,self.markers()[i].title);
-          }
+          renderMarkers(self.markers()[i].position,self.markers()[i].title);
           popInfowindow(self.markers()[i], self.infowindow);
         }
       }
@@ -217,7 +218,7 @@ function ViewModel() {
             var gaslatlng=response.businesses[j].coordinates;
             var markerlatlng = {lat: gaslatlng.latitude, 
                                 lng: gaslatlng.longitude};
-            console.log(response.businesses[j]);
+            //console.log(response.businesses[j]);
             // render the gas station info below the map
             self.show_gas.push({
               distance : response.businesses[j].distance.toFixed(0) + " meters away",
@@ -304,10 +305,13 @@ function ViewModel() {
     this.initMap= function initMap(){
         // Constructor creates a new map
         var fb = firebase.database().ref("/alans-gas-station");
-
+        self.placeArray.removeAll();
         fb.on('value', function(snapshot) {
           self.DATA = snapshot.val();
-          self.placeArray = ko.observableArray(self.DATA);
+          //self.placeArray = ko.observableArray(self.DATA);
+            //console.log(self.DATA[i]);
+          var cp = self.DATA.slice();
+          self.placeArray = ko.observableArray(cp);
           self.Mapset();
       });
         
@@ -389,9 +393,9 @@ function ViewModel() {
           address = address.replace(' undefined','');
         }
         address = address.split(' ').join('+');
-        console.log(address);
+        //console.log(address);
 
-        var locationurl="http://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg";
+        var locationurl="https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg";
         var addNewlocation=$.getJSON(locationurl, function(data){
           if(data.results.length===0){
             alert("Cannot find the place. please write it precisely!");
@@ -413,11 +417,14 @@ function ViewModel() {
                 remember : self.remember()
               };
           self.placeArray.push(place);
-          self.changed =  ko.observable(true);
+          var pre=false
+          if (self.changed())
+            pre = true;
+          self.changed = ko.observable(true);
           if (place.remember){
             self.DATA.push(place);
             firebase.database().ref("/alans-gas-station").set(self.DATA);
-            self.changed = ko.observable(false);
+            self.changed = ko.observable(pre);
           }
           self.Mapset();
         }).fail(function(){self.mapError();});
@@ -436,8 +443,7 @@ function ViewModel() {
       else {
         alert("You have "+self.placeArray().length +" places now!");
         self.changed = ko.observable(false);
-        self.DATA = self.placeArray();
-        console.log(self.DATA);
+        self.DATA = self.placeArray.slice();
         return firebase.database().ref("/alans-gas-station").set(self.DATA)};
       }
 }
