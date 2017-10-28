@@ -9,7 +9,7 @@ function ViewModel() {
     this.type=ko.observable();
     this.remain=function(){alert("This part is not finished, sorry :(");};
     this.types=ko.observableArray(['Park', 'Home', 'Company','Restaurant', 'Others']);
-    this.local=ko.observable({latitude: 37.4191334, longitude: -121.896173315});
+    this.local= {lat: 37.4191334, lng: -121.896173315};
 	  this.street= ko.observable();
     this.city= ko.observable();
     this.show_gas=ko.observableArray([]);
@@ -312,8 +312,9 @@ function ViewModel() {
         
     };
     this.Mapset = function (){
+      console.log(self.local);
       self.map = new google.maps.Map(document.getElementById('map'), {
-          center: self.placeArray()[0].latlng,
+          center: self.local,
           zoom: 14
         }); 
       self.bound = new google.maps.LatLngBounds();
