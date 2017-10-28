@@ -248,7 +248,7 @@ function ViewModel() {
                   title: title,
                   type: type,
                   animation: google.maps.Animation.DROP,
-                  icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+                  icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
             });
             gmarkers.push(self.marker);
               // make the marker within bound
@@ -304,6 +304,7 @@ function ViewModel() {
     this.initMap= function initMap(){
         // Constructor creates a new map
         var fb = firebase.database().ref("/alans-gas-station");
+
         fb.on('value', function(snapshot) {
           self.DATA = snapshot.val();
           self.placeArray = ko.observableArray(self.DATA);
@@ -312,11 +313,10 @@ function ViewModel() {
         
     };
     this.Mapset = function (){
-      console.log(self.local);
       self.map = new google.maps.Map(document.getElementById('map'), {
           center: self.local,
           zoom: 14
-        }); 
+      }); 
       self.bound = new google.maps.LatLngBounds();
       self.markers.removeAll();
       if (navigator.geolocation) {
@@ -329,11 +329,11 @@ function ViewModel() {
             self.marker = new google.maps.Marker({
               position: pos,
               map: self.map,
-              title: "You are Here",
+              title: "Your Location",
               type: "Others",
-              icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+              icon: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
               animation: google.maps.Animation.DROP
-              });
+            });
             self.markers.push(self.marker);
             self.infowindow = new google.maps.InfoWindow()
             self.addMarker(self.marker);
@@ -391,7 +391,7 @@ function ViewModel() {
         address = address.split(' ').join('+');
         console.log(address);
 
-        var locationurl="https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg";
+        var locationurl="http://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyDsNP2t-xraE6Nn-rCuTM4SuF9zAPyXXjg";
         var addNewlocation=$.getJSON(locationurl, function(data){
           if(data.results.length===0){
             alert("Cannot find the place. please write it precisely!");
