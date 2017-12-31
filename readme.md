@@ -1,5 +1,7 @@
 # Local Gas Station Map
 
+**New Feature (2017.12.31)**: Added URL to direct to gas stations in Gas Station Markers.
+
 **New Feature (2017.10.27)**: GPS locating added! You can instantly see your local gas stations once you open the website.
 
 **New Feature (2017.10.27)**: "Save Place" implemented! You can add new places of your own now. Besides, It utilizes **real-time database** so that you can also see what other people have added to the map!
