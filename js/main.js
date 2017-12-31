@@ -280,7 +280,7 @@ function ViewModel() {
         for (var i=0;i<marker.type.length;i++){
           content += '<div width="100px">'+ marker.type[i].title+'</div>';
         }
-        content +='<a href="https://www.google.com/maps/dir/?api=1&destination='+marker.position.lat()+','+marker.position.lng()+'&travelmode=driving">Direct to Here</a>';
+        content +='<a href="https://www.google.com/maps/dir/?api=1&destination='+marker.position.lat()+','+marker.position.lng()+'&travelmode=driving"  rel="noopener noreferrer" target="_blank">Direct to Here</a>';
         infowindow.setContent(content);
         infowindow.open(self.map, marker);
               // Make sure the marker property is cleared if the infowindow is closed.
